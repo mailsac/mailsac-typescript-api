@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "Official Mailsac API client library",
   "main": "mailsac-client.js",
+  "private": false,
   "scripts": {
     "test": "npm test",
     "build": "tsc"

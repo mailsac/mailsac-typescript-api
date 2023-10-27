@@ -1,0 +1,23 @@
+{
+  "name": "@mailsac/api",
+  "version": "0.1.0",
+  "description": "Official Mailsac API client library",
+  "main": "mailsac-client.js",
+  "scripts": {
+    "test": "npm test",
+    "build": "tsc"
+  },
+  "keywords": [
+    "mailsac",
+    "email",
+    "testing"
+  ],
+  "author": "Forking Software LLC <team@forkingsoftware.com>",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.6.0",
+    "mocha": "^10.2.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2"
+  }
+}

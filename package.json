@@ -20,5 +20,13 @@
     "mocha": "^10.2.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.2.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mailsac/mailsac-typescript-api"
+  },
+  "bugs": {
+    "email": "support@team.mailsac.com",
+    "url": "https://github.com/mailsac/mailsac-typescript-api/issues"
   }
 }

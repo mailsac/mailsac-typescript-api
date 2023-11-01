@@ -13,15 +13,17 @@ which can be seen at https://mailsac.com/openapi.yml or https://mailsac.com/open
 npm install @mailsac/api
 ```
 
-See the official Mailsac API spec documentation:
+The official Mailsac API spec documentation which includes usage examples for this library:
 
 https://mailsac.com/docs/api
 
-or the guides:
+or see the guides:
 
 https://docs.mailsac.com
 
-### Example
+### [List of all mailsac client methods](methodList.md)
+
+### Usage Example
 
 Get started by instantiating a client library instance with an API key:
 
@@ -30,7 +32,7 @@ import { Mailsac } from "@mailsac/api";
 // or for javascript
 // const { Mailsac } = require("@mailsac/api");
 
-const mailsac = new Mailsac({ headers: {  "Mailsac-Key": process.env.MAILSAC_KEY } }); // api key from mailsac.com
+const mailsac = new Mailsac({ headers: {  "Mailsac-Key": process.env.MAILSAC_KEY } }); // api key from mailsac.com/v2/credentials
 ```
 
 Then you can use the client to make requests:
@@ -48,7 +50,7 @@ console.log({ myAddresses }); // [{ _id: "test-private@mailsac-com", ... }]
 
 // got to your email client, send an email to the address....
 // ...then check the mail
-const messages = await mailsac.addresses.listMessages('test-private@mailsac.com');
+const messages = await mailsac.messages.listMessages('test-private@mailsac.com');
 console.log({ messages }); // [{...}, {...}, ...]
 
 ```
@@ -58,4 +60,3 @@ There are many more API endpoints which are supported by the client library. Loo
 
 Mailsac has features like custom subdomains of `msdc.co` which require no DNS config, so you can be receiving
 private email for testing in seconds.
-

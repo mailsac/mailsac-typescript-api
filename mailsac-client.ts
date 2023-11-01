@@ -581,6 +581,162 @@ export type Skip = number;
  */
 export type Limit = number;
 
+export interface DeleteAddressParams {
+    deleteAddressMessages?: boolean;
+    /** Email address */
+    email: EmailString;
+}
+
+export interface ListMessagesParams {
+    /** Return messages returned up to this UTC date */
+    until?: Date;
+    /** Limit results to this many */
+    limit?: Limit;
+    /** Email address */
+    email: EmailString;
+}
+
+export interface DeleteAllMessagesParams {
+    /** Return messages returned up to this UTC date */
+    until?: Date;
+    /** Limit results to this many */
+    limit?: Limit;
+    /** Email address */
+    email: EmailString;
+}
+
+export interface GetFullRawMessageParams {
+    /** Download to browser */
+    download?: 1;
+    /** Email address */
+    email: EmailString;
+    /** Mailsac-generated globally unique message identifier */
+    messageId: MessageId;
+}
+
+export interface GetHeadersParams {
+    /** Download to browser */
+    download?: 1;
+    messageHeadersFormat?: "json" | "json-ordered" | "plain";
+    /** Email address */
+    email: EmailString;
+    /** Mailsac-generated globally unique message identifier */
+    messageId: MessageId;
+}
+
+export interface GetBodyDirtyParams {
+    /** Download to browser */
+    download?: 1;
+    /** Email address */
+    email: EmailString;
+    /** Mailsac-generated globally unique message identifier */
+    messageId: MessageId;
+}
+
+export interface GetBodySanitizedParams {
+    /** Download to browser */
+    download?: 1;
+    /** Email address */
+    email: EmailString;
+    /** Mailsac-generated globally unique message identifier */
+    messageId: MessageId;
+}
+
+export interface GetBodyPlainTextParams {
+    /** Download to browser */
+    download?: 1;
+    /** Email address */
+    email: EmailString;
+    /** Mailsac-generated globally unique message identifier */
+    messageId: MessageId;
+}
+
+export interface ListInboxMessagesParams {
+    /** Limit results to this many */
+    limit?: Limit;
+    /** Only fetch messages since this date */
+    since?: Date;
+    /** How many items to skip (like paging) */
+    skip?: Skip;
+}
+
+export interface FilterInboxMessagesParams {
+    /** Messages must include this text in the subject line */
+    andSubjectIncludes?: string;
+    /** Messages must include this text in FROM envelope */
+    andFrom?: string;
+    /** Messages must include this text in TO envelope or the `message.inbox` is equal to this value */
+    andTo?: string;
+}
+
+export interface SearchInboxMessagesParams {
+    /** Searches to, from, and subject for all messages on this account, limited to 100 results. */
+    query?: string;
+}
+
+export interface ListDomainMessagesParams {
+    /** Return messages returned up to this UTC date */
+    until?: Date;
+    /** Limit results to this many */
+    limit?: Limit;
+    /** Domain */
+    domain: DomainString;
+}
+
+export interface ListPublicAttachmentsParams {
+    /** Date in ISO 8601 */
+    startDate: Date;
+    /** Date in ISO 8601 */
+    endDate: Date;
+    /** How many items to skip (like paging) */
+    skip?: Skip;
+    /** Limit results to this many */
+    limit?: Limit;
+}
+
+export interface ListTopPublicAddressesParams {
+    /** Date in ISO 8601 */
+    startDate?: Date;
+    /** Date in ISO 8601 */
+    endDate?: Date;
+    /** How many items to skip (like paging) */
+    skip?: Skip;
+    /** Limit results to this many */
+    limit?: Limit;
+}
+
+export interface ListTopPublicSendersParams {
+    /** Date in ISO 8601 */
+    startDate?: Date;
+    /** Date in ISO 8601 */
+    endDate?: Date;
+    /** How many items to skip (like paging) */
+    skip?: Skip;
+    /** Limit results to this many */
+    limit?: Limit;
+}
+
+export interface ListTopPublicDomainsParams {
+    /** Date in ISO 8601 */
+    startDate?: Date;
+    /** Date in ISO 8601 */
+    endDate?: Date;
+    /** How many items to skip (like paging) */
+    skip?: Skip;
+    /** Limit results to this many */
+    limit?: Limit;
+}
+
+export interface DoNotUseWebSocketDocsOnlyParams {
+    /** Mailsac-Key in the `?key=` querystring */
+    key?: string;
+    /**
+     * Private addresses or domains which are enabled for web socket messages
+     * @example "anything_123@mailsac.com,mail.mydomain.com"
+     */
+    addresses?: string;
+}
+
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse, HeadersDefaults, ResponseType } from "axios";
 import axios from "axios";
 
@@ -714,7 +870,7 @@ export class HttpClient<SecurityDataType = unknown> {
 
 /**
  * @title mailsac API Specification
- * @version 1.0.0
+ * @version 1.0.1
  *
  * ## About the API
  *
@@ -730,7 +886,7 @@ export class HttpClient<SecurityDataType = unknown> {
  *
  * **Base API Endpoint**:
  *
- * * [https://mailsac.com/api/](https://mailsac.com/api/)
+ * * `[https://mailsac.com/api/](https://mailsac.com/api/)`
  * * _All API documentation is relative to this endpoint._
  *
  * **OpenAPI Spec**:
@@ -741,9 +897,9 @@ export class HttpClient<SecurityDataType = unknown> {
  *
  * ### Support and Resources
  *
+ * * [npm Node.js and Browser library - @mailsac/api](https://www.npmjs.com/package/@mailsac/api)
  * * [Full Documentation and Guides](https://docs.mailsac.com)
  * * [Community Support and Discussion Forums](https://forum.mailsac.com/forums/)
- * * [Community Node.js and Browser library - yovanoc](https://github.com/yovanoc/mailsac)
  * * [Web socket example in Node.js - ruffrey](https://github.com/ruffrey/mailsac-node-websocket-example)
  *
  * Paid Email Support, Pre-Sales
@@ -756,16 +912,16 @@ export class HttpClient<SecurityDataType = unknown> {
 export class Mailsac<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
     addresses = {
         /**
-         * No description
+         * @description Get an array of private inbox address objects for the account. These addresses must be setup ("reserved") using `POST /api/addresses/:email`, or [on the Add Email Address page](https://mailsac.com/private-address).
          *
-         * @tags Email Addresses API
+         * @tags Addresses
          * @name ListAddresses
          * @summary List all private email addresses
          * @request GET:/addresses
          * @secure
          */
         listAddresses: (params: RequestParams = {}) =>
-            this.request<EmailAddress, ErrorResponseBody>({
+            this.request<EmailAddressList, ErrorResponseBody>({
                 path: `/addresses`,
                 method: "GET",
                 secure: true,
@@ -776,7 +932,7 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
         /**
          * No description
          *
-         * @tags Email Addresses API
+         * @tags Addresses
          * @name GetAddress
          * @summary Fetch an address or check if it is reserved
          * @request GET:/addresses/{email}
@@ -794,7 +950,7 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
         /**
          * @description Sets the email address private and "owned" by the account. All messages which already exist, and any future messages which are received, will be private to this account only. An email address must be reserved to be able to forward messages to another email address, Slack, web sockets, or webhooks. Public email addresses, and private email addresses under a custom domain, are not routeable.
          *
-         * @tags Email Addresses API
+         * @tags Addresses
          * @name CreateAddress
          * @summary Reserve (create/own) a private email address
          * @request POST:/addresses/{email}
@@ -814,7 +970,7 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
         /**
          * @description For a private email address, set it to forward to another place. It can be forwarded to another email (with `via mailsac` indicator), to a websocket, to a webhook, or to a Slack channel.
          *
-         * @tags Email Addresses API
+         * @tags Addresses
          * @name UpdateAddress
          * @summary Update private email address forwarding and metadata
          * @request PUT:/addresses/{email}
@@ -833,19 +989,13 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
         /**
          * @description Removes this private address from ownership by the account. Any email received to the address's inbox will be public in the future, unless the address was under a custom domain which is set private.
          *
-         * @tags Email Addresses API
+         * @tags Addresses
          * @name DeleteAddress
          * @summary Release a private email address
          * @request DELETE:/addresses/{email}
          * @secure
          */
-        deleteAddress: (
-            email: EmailString,
-            query?: {
-                deleteAddressMessages?: boolean;
-            },
-            params: RequestParams = {},
-        ) =>
+        deleteAddress: ({ email, ...query }: DeleteAddressParams, params: RequestParams = {}) =>
             this.request<void, ErrorResponseBody>({
                 path: `/addresses/${email}`,
                 method: "DELETE",
@@ -857,7 +1007,7 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
         /**
          * No description
          *
-         * @tags Email Addresses API
+         * @tags Addresses
          * @name CheckAvailability
          * @summary Check address ownership
          * @request GET:/addresses/{email}/availability
@@ -872,9 +1022,81 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
             }),
 
         /**
+         * @description Reserves multiple private addresses. The max addresses per request is 100.
+         *
+         * @tags Addresses
+         * @name CreateAddresses
+         * @summary Reserve multiple private addresses
+         * @request POST:/private-addresses-bulk
+         * @secure
+         */
+        createAddresses: (
+            data: {
+                /** email addresses */
+                addresses?: EmailStringList;
+            },
+            params: RequestParams = {},
+        ) =>
+            this.request<EmailAddressList, ErrorResponseBody>({
+                path: `/private-addresses-bulk`,
+                method: "POST",
+                body: data,
+                secure: true,
+                type: ContentType.Json,
+                format: "json",
+                ...params,
+            }),
+    };
+    emailValidation = {
+        /**
+         * @description Determine whether an email address is a valid format, whether it is a disposable address, and the domains or IP addresses it is associated with.
+         *
+         * @tags emailValidation
+         * @name ValidateAddress
+         * @summary Validate an email address and if it is disposable
+         * @request GET:/validations/addresses/{email}
+         * @secure
+         */
+        validateAddress: (email: EmailString, params: RequestParams = {}) =>
+            this.request<EmailAddressIntegrity, any>({
+                path: `/validations/addresses/${email}`,
+                method: "GET",
+                secure: true,
+                format: "json",
+                ...params,
+            }),
+
+        /**
+         * @description Determine whether an email address is a valid format, whether it is a disposable address, and the domains or IP addresses it is associated with.
+         *
+         * @tags emailValidation
+         * @name ValidateAddressesBulk
+         * @summary Validate up to 50 email addresses
+         * @request POST:/validations/addresses
+         * @secure
+         */
+        validateAddressesBulk: (
+            data: {
+                /** email addresses */
+                emails?: EmailStringList;
+            },
+            params: RequestParams = {},
+        ) =>
+            this.request<EmailAddressIntegrityList, any>({
+                path: `/validations/addresses`,
+                method: "POST",
+                body: data,
+                secure: true,
+                type: ContentType.Json,
+                format: "json",
+                ...params,
+            }),
+    };
+    messages = {
+        /**
          * @description Get the number of messages for an email inbox address. **It is NOT necessary to reserve the address** before using this route. Whether it is an address on a custom domain, or a public domain, or mailsac.com, the mail can be counted as long as nobody else owns it.
          *
-         * @tags Email Messages API
+         * @tags Messages
          * @name CountMessages
          * @summary Count messages for an email inbox
          * @request GET:/addresses/{email}/message-count
@@ -900,22 +1122,13 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
         /**
          * @description Get a list of messages for the email address. Messages are always **sorted in decending order by when they were received**, with the newest message always in the first position of the array. The email message objects are abbreviated to provide basic meta data. To get more information about a specific message, use `GET /api/addresses/{email}/messages/{messageId}`. **It is NOT necessary to reserve the address** before checking mail! Whether it is an address on a custom domain, or a public domain, or mailsac.com, the mail can be checked with this route.
          *
-         * @tags Email Messages API
+         * @tags Messages
          * @name ListMessages
          * @summary List messages for an email inbox
          * @request GET:/addresses/{email}/messages
          * @secure
          */
-        listMessages: (
-            email: EmailString,
-            query?: {
-                /** Return messages returned up to this UTC date */
-                until?: Date;
-                /** Limit results to this many */
-                limit?: Limit;
-            },
-            params: RequestParams = {},
-        ) =>
+        listMessages: ({ email, ...query }: ListMessagesParams, params: RequestParams = {}) =>
             this.request<EmailMessageShort, ErrorResponseBody>({
                 path: `/addresses/${email}/messages`,
                 method: "GET",
@@ -928,22 +1141,13 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
         /**
          * @description This deletes all messages for a specific email address. The address must be an owned address or an address in a owned domain. Starred messages will not be deleted. Use `DELETE /addresses/{email}/messages/{messageId}` to remove starred messages or unstar the messages before calling this route.
          *
-         * @tags Email Messages API
+         * @tags Messages
          * @name DeleteAllMessages
          * @summary Delete all messages for an email inbox
          * @request DELETE:/addresses/{email}/messages
          * @secure
          */
-        deleteAllMessages: (
-            email: EmailString,
-            query?: {
-                /** Return messages returned up to this UTC date */
-                until?: Date;
-                /** Limit results to this many */
-                limit?: Limit;
-            },
-            params: RequestParams = {},
-        ) =>
+        deleteAllMessages: ({ email, ...query }: DeleteAllMessagesParams, params: RequestParams = {}) =>
             this.request<void, ErrorResponseBody>({
                 path: `/addresses/${email}/messages`,
                 method: "DELETE",
@@ -955,7 +1159,7 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
         /**
          * @description Get a list of messages that have been saved and made private for the entire account using the "star message" feature. Messages recieved via the Capture Service will also show up as starred IF the `capturePrivate` flag on the account is enabled.
          *
-         * @tags Email Messages API
+         * @tags Messages
          * @name ListStarredMessages
          * @summary List starred (saved) messages on the account
          * @request GET:/addresses/starred/messages
@@ -973,7 +1177,7 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
         /**
          * @description Retrieves metadata about a single email message. This route includes additional metadata not available when listing messages, such as parsed links from the text or HTML body, and attachment md5sums. To get even more information about message attachments, like filenames, see the Attachments API. To get the entire original SMTP message, see the "raw" message route.
          *
-         * @tags Email Messages API
+         * @tags Messages
          * @name GetMessageMetadata
          * @summary Get email message metadata
          * @request GET:/addresses/{email}/messages/{messageId}
@@ -991,7 +1195,7 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
         /**
          * @description Deletes an individual email message. There is no trash or undo.
          *
-         * @tags Email Messages API
+         * @tags Messages
          * @name DeleteMessage
          * @summary Delete an email message
          * @request DELETE:/addresses/{email}/messages/{messageId}
@@ -1017,24 +1221,33 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
             }),
 
         /**
+         * @description Gets the entire original SMTP message transport - everything that was sent over the network to Mailsac's inbound servers, plus any Mailsac-generated `Received` headers, and special `x-mailsac-*` headers.
+         *
+         * @tags Messages
+         * @name GetFullRawMessage
+         * @summary Get original SMTP message
+         * @request GET:/raw/{email}/{messageId}
+         * @secure
+         */
+        getFullRawMessage: ({ email, messageId, ...query }: GetFullRawMessageParams, params: RequestParams = {}) =>
+            this.request<DomainString, ErrorResponseBody>({
+                path: `/raw/${email}/${messageId}`,
+                method: "GET",
+                query: query,
+                secure: true,
+                ...params,
+            }),
+
+        /**
          * @description Returns pre-parsed message headers in one of 3 formats - `json`, `json-ordered`, or `plain`. If no querystring parameter is provided, the default format will be `json`. Every email is different; fields in the below examples are not guaranteed to exist.
          *
-         * @tags Email Messages API
+         * @tags Messages
          * @name GetHeaders
          * @summary Get parsed message headers
          * @request GET:/addresses/{email}/messages/{messageId}/headers
          * @secure
          */
-        getHeaders: (
-            email: EmailString,
-            messageId: MessageId,
-            query?: {
-                /** Download to browser */
-                download?: 1;
-                messageHeadersFormat?: "json" | "json-ordered" | "plain";
-            },
-            params: RequestParams = {},
-        ) =>
+        getHeaders: ({ email, messageId, ...query }: GetHeadersParams, params: RequestParams = {}) =>
             this.request<MessageHeaders, ErrorResponseBody>({
                 path: `/addresses/${email}/messages/${messageId}/headers`,
                 method: "GET",
@@ -1044,9 +1257,63 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
             }),
 
         /**
+         * @description Get a message's HTML content. Attached images are inlined and nothing has been stripped. When no HTML body was sent in the original message, a simple HTML body will be created. Use the querystring param ?download=1 to trigger file download in browser.
+         *
+         * @tags Messages
+         * @name GetBodyDirty
+         * @summary Get message HTML body (dirty)
+         * @request GET:/dirty/{email}/{messageId}
+         * @secure
+         */
+        getBodyDirty: ({ email, messageId, ...query }: GetBodyDirtyParams, params: RequestParams = {}) =>
+            this.request<DomainString, ErrorResponseBody>({
+                path: `/dirty/${email}/${messageId}`,
+                method: "GET",
+                query: query,
+                secure: true,
+                ...params,
+            }),
+
+        /**
+         * @description Get safe HTML from an email message. Scripts, images and links are stripped out. This HTML is safer to render than the potentially "dirty" original HTML. When no HTML body was sent in the original message, a simple HTML body will be created. Use the querystring param ?download=1 to trigger file download in browser.
+         *
+         * @tags Messages
+         * @name GetBodySanitized
+         * @summary Get the message HTML body (sanitized)
+         * @request GET:/body/{email}/{messageId}
+         * @secure
+         */
+        getBodySanitized: ({ email, messageId, ...query }: GetBodySanitizedParams, params: RequestParams = {}) =>
+            this.request<DomainString, ErrorResponseBody>({
+                path: `/body/${email}/${messageId}`,
+                method: "GET",
+                query: query,
+                secure: true,
+                ...params,
+            }),
+
+        /**
+         * @description Get a message's text content. If the original message only contained HTML, a simple plain text body will be generated. HTTP links in the plain text email will be available when fetching the message's metadata at the `message.links[]` property. Use the querystring param ?download=1 to trigger file download in browser.
+         *
+         * @tags Messages
+         * @name GetBodyPlainText
+         * @summary Get message plaintext
+         * @request GET:/text/{email}/{messageId}
+         * @secure
+         */
+        getBodyPlainText: ({ email, messageId, ...query }: GetBodyPlainTextParams, params: RequestParams = {}) =>
+            this.request<DomainString, ErrorResponseBody>({
+                path: `/text/${email}/${messageId}`,
+                method: "GET",
+                query: query,
+                secure: true,
+                ...params,
+            }),
+
+        /**
          * @description Toggle a message's *starred* status so it will not be automatically recycled when the account's message storage limit is reached. There is no PUT body. It returns only the message metadata.
          *
-         * @tags Email Messages API
+         * @tags Messages
          * @name ToggleMessageStar
          * @summary Star (save) a message
          * @request PUT:/addresses/{email}/messages/{messageId}/star
@@ -1064,7 +1331,7 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
         /**
          * @description To help organize messages and group messages together, add a label to a message. Labels are used in the Inbox UI to group messages. When successful, returns 200 with a subset of the message object. When the label already exists on the message, the message is not modified and the API endpoint returns 200. No PUT body is needed.
          *
-         * @tags Email Messages API
+         * @tags Messages
          * @name AddMessageLabel
          * @summary Add a label to a message
          * @request PUT:/addresses/{email}/messages/{messageId}/labels/{label}
@@ -1090,7 +1357,7 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
         /**
          * @description Removes a label from a message. Returns 200 with a subset of the message object when successful. When the label did not exists on the message, the message is not modified and the API endpoint returns 200.
          *
-         * @tags Email Messages API
+         * @tags Messages
          * @name DeleteMessageLabel
          * @summary Remove a label from a message
          * @request DELETE:/addresses/{email}/messages/{messageId}/labels/{label}
@@ -1121,7 +1388,7 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
         /**
          * @description Move the message to a different mail folder. No new folders can be added. To organize mail, use labels. No PUT body is needed.
          *
-         * @tags Email Messages API
+         * @tags Messages
          * @name SetMessageFolder
          * @summary Move a message into a folder
          * @request PUT:/addresses/{email}/messages/{messageId}/folder/{folder}
@@ -1152,7 +1419,7 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
         /**
          * @description Change the read state of a message. Pass `readBoolean` as `true` to mark the message as read, and `false` to mark it as unread. The default for any new message `false` (unread). No PUT body is needed.
          *
-         * @tags Email Messages API
+         * @tags Messages
          * @name SetMessageReadStatus
          * @summary Set message read/unread status
          * @request PUT:/addresses/{email}/messages/{messageId}/read/{readBoolean}
@@ -1181,9 +1448,176 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
             }),
 
         /**
+         * @description Used by the Inbox UI to display all messages for the account, across all domains and private addresses. Returns email message short metadata, paginated, with the global account unread message count.
+         *
+         * @tags Messages
+         * @name ListInboxMessages
+         * @summary Get all account messages paginated
+         * @request GET:/inbox
+         * @secure
+         */
+        listInboxMessages: (query: ListInboxMessagesParams, params: RequestParams = {}) =>
+            this.request<
+                {
+                    messages?: EmailMessageShort[];
+                    unread?: number;
+                    limit?: number;
+                    skip?: number;
+                },
+                ErrorResponseBody
+            >({
+                path: `/inbox`,
+                method: "GET",
+                query: query,
+                secure: true,
+                format: "json",
+                ...params,
+            }),
+
+        /**
+         * @description Filter account messages within the the `to` and `from` `.address` fields, and the `subject` line. This differs from `/api/inbox-search` by using logical AND, rather than OR in `/api/inbox-search`. At least one query condition is required, otherwise a 400 will be returned. A maximum of 100 results will ever be returned. Refine the query or reduce the number of messages in the account to find specific items.
+         *
+         * @tags Messages
+         * @name FilterInboxMessages
+         * @summary Filter messages in account by to, from, and/or subject
+         * @request GET:/inbox-filter
+         * @secure
+         */
+        filterInboxMessages: (query: FilterInboxMessagesParams, params: RequestParams = {}) =>
+            this.request<
+                {
+                    messages?: EmailMessageShort[];
+                },
+                ErrorResponseBody
+            >({
+                path: `/inbox-filter`,
+                method: "GET",
+                query: query,
+                secure: true,
+                format: "json",
+                ...params,
+            }),
+
+        /**
+         * @description Search all account messages within the the `to` and `from` `.address` fields, and the `subject` line. This differs from `/api/inbox-filter` by using logical OR, rather than AND in `/api/inbox-filter`. A maximum of 100 results will ever be returned. Refine the query or reduce the number of messages in the account to find specific items.
+         *
+         * @tags Messages
+         * @name SearchInboxMessages
+         * @summary Search messages by to, from, and subject
+         * @request GET:/inbox-search
+         * @secure
+         */
+        searchInboxMessages: (query: SearchInboxMessagesParams, params: RequestParams = {}) =>
+            this.request<
+                {
+                    query?: string;
+                    messages?: EmailMessageShort[];
+                },
+                ErrorResponseBody
+            >({
+                path: `/inbox-search`,
+                method: "GET",
+                query: query,
+                secure: true,
+                format: "json",
+                ...params,
+            }),
+
+        /**
+         * @description Get a list of messages across any inboxes of a domain. Messages are always **sorted in decending order by when they were received**, with the newest message always in the first position of the array. The email message objects are abbreviated to provide basic meta data. To get more information about a specific message, use `GET /api/addresses/{email}/messages/{messageId}`. The domain must be owned by the account making the request, and have DNS validated. Paginate with `until?=<Date>` and `limit=<uint>`.
+         *
+         * @tags Messages
+         * @name ListDomainMessages
+         * @summary List messages for an domain
+         * @request GET:/domains/{domain}/messages
+         * @secure
+         */
+        listDomainMessages: ({ domain, ...query }: ListDomainMessagesParams, params: RequestParams = {}) =>
+            this.request<EmailMessageShort, ErrorResponseBody>({
+                path: `/domains/${domain}/messages`,
+                method: "GET",
+                query: query,
+                secure: true,
+                format: "json",
+                ...params,
+            }),
+
+        /**
+         * @description Delete all messages for a specifc domain. Starred messages will be deleted. The domain must be owned domain.
+         *
+         * @tags Messages
+         * @name DeleteAllDomainMessages
+         * @summary Delete all messages in a domain
+         * @request POST:/domains/{domain}/delete-all-domain-mail
+         * @secure
+         */
+        deleteAllDomainMessages: (domain: DomainString, params: RequestParams = {}) =>
+            this.request<void, ErrorResponseBody>({
+                path: `/domains/${domain}/delete-all-domain-mail`,
+                method: "POST",
+                secure: true,
+                ...params,
+            }),
+    };
+    domains = {
+        /**
+         * @description List custom domains for the account.
+         *
+         * @tags Domains
+         * @name ListDomains
+         * @summary List domains
+         * @request GET:/domains
+         * @secure
+         */
+        listDomains: (params: RequestParams = {}) =>
+            this.request<DomainsList, ErrorResponseBody>({
+                path: `/domains`,
+                method: "GET",
+                secure: true,
+                format: "json",
+                ...params,
+            }),
+    };
+    account = {
+        /**
+         * @description Get information about the account for this API key.
+         *
+         * @tags Account
+         * @name User
+         * @summary Get current account
+         * @request GET:/me
+         * @secure
+         */
+        user: (params: RequestParams = {}) =>
+            this.request<CurrentUserInfo, ErrorResponseBody>({
+                path: `/me`,
+                method: "GET",
+                secure: true,
+                ...params,
+            }),
+
+        /**
+         * @description Get summary information about email addresses, domains, and usage.
+         *
+         * @tags Account
+         * @name AccountStats
+         * @summary Get account stats
+         * @request GET:/me/stats
+         * @secure
+         */
+        accountStats: (params: RequestParams = {}) =>
+            this.request<CurrentUserStats, ErrorResponseBody>({
+                path: `/me/stats`,
+                method: "GET",
+                secure: true,
+                ...params,
+            }),
+    };
+    attachments = {
+        /**
          * @description Get attachment metadata on email message.
          *
-         * @tags Email Message Attachments
+         * @tags Attachments
          * @name ListMessageAttachments
          * @summary List attachments for an email message
          * @request GET:/addresses/{email}/messages/{messageId}/attachments
@@ -1200,7 +1634,7 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
         /**
          * @description Download an email message attachment as a file.
          *
-         * @tags Email Message Attachments
+         * @tags Attachments
          * @name DownloadAttachment
          * @summary Download email attachment
          * @request GET:/addresses/{email}/messages/{messageId}/attachments/{attachmentIdentifier}
@@ -1218,414 +1652,17 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
                 secure: true,
                 ...params,
             }),
-    };
-    privateAddressesBulk = {
-        /**
-         * @description Reserves multiple private addresses. The max addresses per request is 100.
-         *
-         * @tags Email Addresses API
-         * @name CreateAddresses
-         * @summary Reserve multiple private addresses
-         * @request POST:/private-addresses-bulk
-         * @secure
-         */
-        createAddresses: (
-            data: {
-                /** email addresses */
-                addresses?: EmailStringList;
-            },
-            params: RequestParams = {},
-        ) =>
-            this.request<EmailAddressList, ErrorResponseBody>({
-                path: `/private-addresses-bulk`,
-                method: "POST",
-                body: data,
-                secure: true,
-                type: ContentType.Json,
-                format: "json",
-                ...params,
-            }),
-    };
-    validations = {
-        /**
-         * @description Determine whether an email address is a valid format, whether it is a disposable address, and the domains or IP addresses it is associated with.
-         *
-         * @tags Email Validations API
-         * @name ValidateAddress
-         * @summary Validate an email address and if it is disposable
-         * @request GET:/validations/addresses/{email}
-         * @secure
-         */
-        validateAddress: (email: EmailString, params: RequestParams = {}) =>
-            this.request<EmailAddressIntegrity, any>({
-                path: `/validations/addresses/${email}`,
-                method: "GET",
-                secure: true,
-                format: "json",
-                ...params,
-            }),
 
-        /**
-         * @description Determine whether an email address is a valid format, whether it is a disposable address, and the domains or IP addresses it is associated with.
-         *
-         * @tags Email Validations API
-         * @name ValidateAddressesBulk
-         * @summary Validate up to 50 email addresses
-         * @request POST:/validations/addresses
-         * @secure
-         */
-        validateAddressesBulk: (
-            data: {
-                /** email addresses */
-                emails?: EmailStringList;
-            },
-            params: RequestParams = {},
-        ) =>
-            this.request<EmailAddressIntegrityList, any>({
-                path: `/validations/addresses`,
-                method: "POST",
-                body: data,
-                secure: true,
-                type: ContentType.Json,
-                format: "json",
-                ...params,
-            }),
-    };
-    raw = {
-        /**
-         * @description Gets the entire original SMTP message transport - everything that was sent over the network to Mailsac's inbound servers, plus any Mailsac-generated `Received` headers, and special `x-mailsac-*` headers.
-         *
-         * @tags Email Messages API
-         * @name GetFullRawMessage
-         * @summary Get original SMTP message
-         * @request GET:/raw/{email}/{messageId}
-         * @secure
-         */
-        getFullRawMessage: (
-            email: EmailString,
-            messageId: MessageId,
-            query?: {
-                /** Download to browser */
-                download?: 1;
-            },
-            params: RequestParams = {},
-        ) =>
-            this.request<DomainString, ErrorResponseBody>({
-                path: `/raw/${email}/${messageId}`,
-                method: "GET",
-                query: query,
-                secure: true,
-                ...params,
-            }),
-    };
-    dirty = {
-        /**
-         * @description Get a message's HTML content. Attached images are inlined and nothing has been stripped. When no HTML body was sent in the original message, a simple HTML body will be created. Use the querystring param ?download=1 to trigger file download in browser.
-         *
-         * @tags Email Messages API
-         * @name GetBodyDirty
-         * @summary Get message HTML body (dirty)
-         * @request GET:/dirty/{email}/{messageId}
-         * @secure
-         */
-        getBodyDirty: (
-            email: EmailString,
-            messageId: MessageId,
-            query?: {
-                /** Download to browser */
-                download?: 1;
-            },
-            params: RequestParams = {},
-        ) =>
-            this.request<DomainString, ErrorResponseBody>({
-                path: `/dirty/${email}/${messageId}`,
-                method: "GET",
-                query: query,
-                secure: true,
-                ...params,
-            }),
-    };
-    body = {
-        /**
-         * @description Get safe HTML from an email message. Scripts, images and links are stripped out. This HTML is safer to render than the potentially "dirty" original HTML. When no HTML body was sent in the original message, a simple HTML body will be created. Use the querystring param ?download=1 to trigger file download in browser.
-         *
-         * @tags Email Messages API
-         * @name GetBodySanitized
-         * @summary Get the message HTML body (sanitized)
-         * @request GET:/body/{email}/{messageId}
-         * @secure
-         */
-        getBodySanitized: (
-            email: EmailString,
-            messageId: MessageId,
-            query?: {
-                /** Download to browser */
-                download?: 1;
-            },
-            params: RequestParams = {},
-        ) =>
-            this.request<DomainString, ErrorResponseBody>({
-                path: `/body/${email}/${messageId}`,
-                method: "GET",
-                query: query,
-                secure: true,
-                ...params,
-            }),
-    };
-    text = {
-        /**
-         * @description Get a message's text content. If the original message only contained HTML, a simple plain text body will be generated. HTTP links in the plain text email will be available when fetching the message's metadata at the `message.links[]` property. Use the querystring param ?download=1 to trigger file download in browser.
-         *
-         * @tags Email Messages API
-         * @name GetBodyPlainText
-         * @summary Get message plaintext
-         * @request GET:/text/{email}/{messageId}
-         * @secure
-         */
-        getBodyPlainText: (
-            email: EmailString,
-            messageId: MessageId,
-            query?: {
-                /** Download to browser */
-                download?: 1;
-            },
-            params: RequestParams = {},
-        ) =>
-            this.request<DomainString, ErrorResponseBody>({
-                path: `/text/${email}/${messageId}`,
-                method: "GET",
-                query: query,
-                secure: true,
-                ...params,
-            }),
-    };
-    inbox = {
-        /**
-         * @description Used by the Inbox UI to display all messages for the account, across all domains and private addresses. Returns email message short metadata, paginated, with the global account unread message count.
-         *
-         * @tags Email Messages API
-         * @name ListInboxMessages
-         * @summary Get all account messages paginated
-         * @request GET:/inbox
-         * @secure
-         */
-        listInboxMessages: (
-            query?: {
-                /** Limit results to this many */
-                limit?: Limit;
-                /** Only fetch messages since this date */
-                since?: Date;
-                /** How many items to skip (like paging) */
-                skip?: Skip;
-            },
-            params: RequestParams = {},
-        ) =>
-            this.request<
-                {
-                    messages?: EmailMessageShort[];
-                    unread?: number;
-                    limit?: number;
-                    skip?: number;
-                },
-                ErrorResponseBody
-            >({
-                path: `/inbox`,
-                method: "GET",
-                query: query,
-                secure: true,
-                format: "json",
-                ...params,
-            }),
-    };
-    inboxFilter = {
-        /**
-         * @description Filter account messages within the the `to` and `from` `.address` fields, and the `subject` line. This differs from `/api/inbox-search` by using logical AND, rather than OR in `/api/inbox-search`. At least one query condition is required, otherwise a 400 will be returned. A maximum of 100 results will ever be returned. Refine the query or reduce the number of messages in the account to find specific items.
-         *
-         * @tags Email Messages API
-         * @name FilterInboxMessages
-         * @summary Filter messages in account by to, from, and/or subject
-         * @request GET:/inbox-filter
-         * @secure
-         */
-        filterInboxMessages: (
-            query?: {
-                /** Messages must include this text in the subject line */
-                andSubjectIncludes?: string;
-                /** Messages must include this text in FROM envelope */
-                andFrom?: string;
-                /** Messages must include this text in TO envelope or the `message.inbox` is equal to this value */
-                andTo?: string;
-            },
-            params: RequestParams = {},
-        ) =>
-            this.request<
-                {
-                    messages?: EmailMessageShort[];
-                },
-                ErrorResponseBody
-            >({
-                path: `/inbox-filter`,
-                method: "GET",
-                query: query,
-                secure: true,
-                format: "json",
-                ...params,
-            }),
-    };
-    inboxSearch = {
-        /**
-         * @description Search all account messages within the the `to` and `from` `.address` fields, and the `subject` line. This differs from `/api/inbox-filter` by using logical OR, rather than AND in `/api/inbox-filter`. A maximum of 100 results will ever be returned. Refine the query or reduce the number of messages in the account to find specific items.
-         *
-         * @tags Email Messages API
-         * @name SearchInboxMessages
-         * @summary Search messages by to, from, and subject
-         * @request GET:/inbox-search
-         * @secure
-         */
-        searchInboxMessages: (
-            query?: {
-                /** Searches to, from, and subject for all messages on this account, limited to 100 results. */
-                query?: string;
-            },
-            params: RequestParams = {},
-        ) =>
-            this.request<
-                {
-                    query?: string;
-                    messages?: EmailMessageShort[];
-                },
-                ErrorResponseBody
-            >({
-                path: `/inbox-search`,
-                method: "GET",
-                query: query,
-                secure: true,
-                format: "json",
-                ...params,
-            }),
-    };
-    domains = {
-        /**
-         * @description List custom domains for the account.
-         *
-         * @tags Domains API
-         * @name ListDomains
-         * @summary List domains
-         * @request GET:/domains
-         * @secure
-         */
-        listDomains: (params: RequestParams = {}) =>
-            this.request<DomainsList, ErrorResponseBody>({
-                path: `/domains`,
-                method: "GET",
-                secure: true,
-                format: "json",
-                ...params,
-            }),
-
-        /**
-         * @description Get a list of messages across any inboxes of a domain. Messages are always **sorted in decending order by when they were received**, with the newest message always in the first position of the array. The email message objects are abbreviated to provide basic meta data. To get more information about a specific message, use `GET /api/addresses/{email}/messages/{messageId}`. The domain must be owned by the account making the request, and have DNS validated. Paginate with `until?=<Date>` and `limit=<uint>`.
-         *
-         * @tags Email Messages API
-         * @name ListDomainMessages
-         * @summary List messages for an domain
-         * @request GET:/domains/{domain}/messages
-         * @secure
-         */
-        listDomainMessages: (
-            domain: DomainString,
-            query?: {
-                /** Return messages returned up to this UTC date */
-                until?: Date;
-                /** Limit results to this many */
-                limit?: Limit;
-            },
-            params: RequestParams = {},
-        ) =>
-            this.request<EmailMessageShort, ErrorResponseBody>({
-                path: `/domains/${domain}/messages`,
-                method: "GET",
-                query: query,
-                secure: true,
-                format: "json",
-                ...params,
-            }),
-
-        /**
-         * @description Delete all messages for a specifc domain. Starred messages will be deleted. The domain must be owned domain.
-         *
-         * @tags Email Messages API
-         * @name DeleteAllDomainMessages
-         * @summary Delete all messages in a domain
-         * @request POST:/domains/{domain}/delete-all-domain-mail
-         * @secure
-         */
-        deleteAllDomainMessages: (domain: DomainString, params: RequestParams = {}) =>
-            this.request<void, ErrorResponseBody>({
-                path: `/domains/${domain}/delete-all-domain-mail`,
-                method: "POST",
-                secure: true,
-                ...params,
-            }),
-    };
-    me = {
-        /**
-         * @description Get information about the account for this API key.
-         *
-         * @tags User Account API
-         * @name User
-         * @summary Get current account
-         * @request GET:/me
-         * @secure
-         */
-        user: (params: RequestParams = {}) =>
-            this.request<CurrentUserInfo, ErrorResponseBody>({
-                path: `/me`,
-                method: "GET",
-                secure: true,
-                ...params,
-            }),
-
-        /**
-         * @description Get summary information about email addresses, domains, and usage.
-         *
-         * @tags User Account API
-         * @name AccountStats
-         * @summary Get account stats
-         * @request GET:/me/stats
-         * @secure
-         */
-        accountStats: (params: RequestParams = {}) =>
-            this.request<CurrentUserStats, ErrorResponseBody>({
-                path: `/me/stats`,
-                method: "GET",
-                secure: true,
-                ...params,
-            }),
-    };
-    mailstats = {
         /**
          * @description Search for attachments that were received during the requested time period. Limited to non-private inboxes. Responds with 'Failed to fetch' in swagger editor. Works in curl with generated example.
          *
-         * @tags Email Message Attachments
+         * @tags Attachments
          * @name ListPublicAttachments
          * @summary Search for attachments
          * @request GET:/mailstats/common-attachments
          * @secure
          */
-        listPublicAttachments: (
-            query: {
-                /** Date in ISO 8601 */
-                startDate: Date;
-                /** Date in ISO 8601 */
-                endDate: Date;
-                /** How many items to skip (like paging) */
-                skip?: Skip;
-                /** Limit results to this many */
-                limit?: Limit;
-            },
-            params: RequestParams = {},
-        ) =>
+        listPublicAttachments: (query: ListPublicAttachmentsParams, params: RequestParams = {}) =>
             this.request<CommonAttachments[], ErrorResponseBody>({
                 path: `/mailstats/common-attachments`,
                 method: "GET",
@@ -1638,7 +1675,7 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
         /**
          * @description Provides count of attachments by md5 sum Responds with 'Failed to fetch' in swagger editor, works in curl with generated example
          *
-         * @tags Email Message Attachments
+         * @tags Attachments
          * @name CountPublicAttachments
          * @summary Count public attachments
          * @request GET:/mailstats/common-attachments/{md5sum}/count
@@ -1661,7 +1698,7 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
         /**
          * @description List the email messages that have attachments with the requested MD5 sum. Limited to non-private inboxes.
          *
-         * @tags Email Message Attachments
+         * @tags Attachments
          * @name ListMessagesForAttachment
          * @summary List public messages with an attachment
          * @request GET:/mailstats/common-attachments/{md5sum}
@@ -1679,7 +1716,7 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
         /**
          * @description Download an attachment with the MD5 sum requested.
          *
-         * @tags Email Message Attachments
+         * @tags Attachments
          * @name DownloadPublicAttachment
          * @summary Download public attachment
          * @request GET:/mailstats/common-attachments/{md5sum}/download
@@ -1692,29 +1729,18 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
                 secure: true,
                 ...params,
             }),
-
+    };
+    messageStats = {
         /**
          * No description
          *
-         * @tags Email Stats API
+         * @tags messageStats
          * @name ListTopPublicAddresses
          * @summary List top public disposable email addresses receiving messages
          * @request GET:/mailstats/top-addresses
          * @secure
          */
-        listTopPublicAddresses: (
-            query?: {
-                /** Date in ISO 8601 */
-                startDate?: Date;
-                /** Date in ISO 8601 */
-                endDate?: Date;
-                /** How many items to skip (like paging) */
-                skip?: Skip;
-                /** Limit results to this many */
-                limit?: Limit;
-            },
-            params: RequestParams = {},
-        ) =>
+        listTopPublicAddresses: (query: ListTopPublicAddressesParams, params: RequestParams = {}) =>
             this.request<
                 {
                     /** email address */
@@ -1735,25 +1761,13 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
         /**
          * No description
          *
-         * @tags Email Stats API
+         * @tags messageStats
          * @name ListTopPublicSenders
          * @summary List top sender email addresses for disposable public messages
          * @request GET:/mailstats/top-senders
          * @secure
          */
-        listTopPublicSenders: (
-            query?: {
-                /** Date in ISO 8601 */
-                startDate?: Date;
-                /** Date in ISO 8601 */
-                endDate?: Date;
-                /** How many items to skip (like paging) */
-                skip?: Skip;
-                /** Limit results to this many */
-                limit?: Limit;
-            },
-            params: RequestParams = {},
-        ) =>
+        listTopPublicSenders: (query: ListTopPublicSendersParams, params: RequestParams = {}) =>
             this.request<
                 {
                     /** email address */
@@ -1774,25 +1788,13 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
         /**
          * No description
          *
-         * @tags Email Stats API
+         * @tags messageStats
          * @name ListTopPublicDomains
          * @summary List top public domains receiving disposable messages
          * @request GET:/mailstats/top-domains
          * @secure
          */
-        listTopPublicDomains: (
-            query?: {
-                /** Date in ISO 8601 */
-                startDate?: Date;
-                /** Date in ISO 8601 */
-                endDate?: Date;
-                /** How many items to skip (like paging) */
-                skip?: Skip;
-                /** Limit results to this many */
-                limit?: Limit;
-            },
-            params: RequestParams = {},
-        ) =>
+        listTopPublicDomains: (query: ListTopPublicDomainsParams, params: RequestParams = {}) =>
             this.request<
                 {
                     /**
@@ -1816,7 +1818,7 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
         /**
          * No description
          *
-         * @tags Email Stats API
+         * @tags messageStats
          * @name Denylist
          * @summary List the current deny-list
          * @request GET:/mailstats/blacklist
@@ -1834,7 +1836,7 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
         /**
          * @description Check whether an IP or domain is currently on the deny-list.
          *
-         * @tags Email Stats API
+         * @tags messageStats
          * @name CheckDenylist
          * @summary Check IP or domain on deny-list
          * @request GET:/mailstats/blacklist/{domainOrIP}
@@ -1854,7 +1856,7 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
                 ...params,
             }),
     };
-    customWebSockets = {
+    webSockets = {
         /**
          * @description *Note: this does not work in Swagger UI. Visit https://sock.mailsac.com to test.* You can receive email via web socket for private email addresses and custom domains. To enable web socket forwarding: * Addresses: Select *Edit* for the email address you want to forward. Then check the checkbox for web socket forwarding, and save. * Custom Domains: Select *Manage* for the domain and click the *Forwarding* tab. Toggle the *Enable Web Sockets* option. Note: Web socket forwarding is **not enabled by default.** ### Web Socket Examples #### Web Socket Test Page https://sock.mailsac.com Receive emails in your web browser. Experiment with the web socket gateway in realtime. #### Web Socket Node.js Listen for Mailsac emails via websocket in this tiny Node.js example app. https://github.com/ruffrey/mailsac-node-websocket-example ### Web Socket Connection Endpoint The web socket endpoint is `wss://sock.mailsac.com/incoming-messages` Example: > wss://sock.mailsac.com/incoming-messages?key=k_e9bPnd2adexample&addresses=jeff@mailsac.com,asdf-outbound.mailsac.com > First frame: ``` { "status": 200, "msg": "Listening", "addresses": [ "jeff@mailsac.com" ], "domains": [ "asdf-outbound.mailsac.com" ] } ``` All web socket messages are JSON. After parsing the JSON, there will be a status field with an HTTP status code (usually 200). An email coming over the web socket will also have an email property, and its value will be the same as the messages REST API, plus some additional fields.
          *
@@ -1863,18 +1865,7 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
          * @summary Connect a web socket to wss://sock.mailsac.com/incoming-messages
          * @request POST:/custom_web_sockets
          */
-        doNotUseWebSocketDocsOnly: (
-            query?: {
-                /** Mailsac-Key in the `?key=` querystring */
-                key?: string;
-                /**
-                 * Private addresses or domains which are enabled for web socket messages
-                 * @example "anything_123@mailsac.com,mail.mydomain.com"
-                 */
-                addresses?: string;
-            },
-            params: RequestParams = {},
-        ) =>
+        doNotUseWebSocketDocsOnly: (query: DoNotUseWebSocketDocsOnlyParams, params: RequestParams = {}) =>
             this.request<any, void>({
                 path: `/custom_web_sockets`,
                 method: "POST",
@@ -1882,7 +1873,7 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
                 ...params,
             }),
     };
-    customWebhooks = {
+    webhooks = {
         /**
          * @description *Note: this does not work in Swagger UI.* Webhook Forwarding is one of several options available for forwarding private addresses and custom domains (via catch-all addresses enabled under a custom domain). Forwarding to a Webhook can be configured by selecting Manage Email Addresses from the Dashboard. Select the Settings button next to the email address to manage, then input the URL under Forward To Custom Webhook and select Save Settings. Troubleshoot webhooks using your account *Audit Logs*.
          *

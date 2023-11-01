@@ -581,162 +581,6 @@ export type Skip = number;
  */
 export type Limit = number;
 
-export interface DeleteAddressParams {
-    deleteAddressMessages?: boolean;
-    /** Email address */
-    email: EmailString;
-}
-
-export interface ListMessagesParams {
-    /** Return messages returned up to this UTC date */
-    until?: Date;
-    /** Limit results to this many */
-    limit?: Limit;
-    /** Email address */
-    email: EmailString;
-}
-
-export interface DeleteAllMessagesParams {
-    /** Return messages returned up to this UTC date */
-    until?: Date;
-    /** Limit results to this many */
-    limit?: Limit;
-    /** Email address */
-    email: EmailString;
-}
-
-export interface GetFullRawMessageParams {
-    /** Download to browser */
-    download?: 1;
-    /** Email address */
-    email: EmailString;
-    /** Mailsac-generated globally unique message identifier */
-    messageId: MessageId;
-}
-
-export interface GetHeadersParams {
-    /** Download to browser */
-    download?: 1;
-    messageHeadersFormat?: "json" | "json-ordered" | "plain";
-    /** Email address */
-    email: EmailString;
-    /** Mailsac-generated globally unique message identifier */
-    messageId: MessageId;
-}
-
-export interface GetBodyDirtyParams {
-    /** Download to browser */
-    download?: 1;
-    /** Email address */
-    email: EmailString;
-    /** Mailsac-generated globally unique message identifier */
-    messageId: MessageId;
-}
-
-export interface GetBodySanitizedParams {
-    /** Download to browser */
-    download?: 1;
-    /** Email address */
-    email: EmailString;
-    /** Mailsac-generated globally unique message identifier */
-    messageId: MessageId;
-}
-
-export interface GetBodyPlainTextParams {
-    /** Download to browser */
-    download?: 1;
-    /** Email address */
-    email: EmailString;
-    /** Mailsac-generated globally unique message identifier */
-    messageId: MessageId;
-}
-
-export interface ListInboxMessagesParams {
-    /** Limit results to this many */
-    limit?: Limit;
-    /** Only fetch messages since this date */
-    since?: Date;
-    /** How many items to skip (like paging) */
-    skip?: Skip;
-}
-
-export interface FilterInboxMessagesParams {
-    /** Messages must include this text in the subject line */
-    andSubjectIncludes?: string;
-    /** Messages must include this text in FROM envelope */
-    andFrom?: string;
-    /** Messages must include this text in TO envelope or the `message.inbox` is equal to this value */
-    andTo?: string;
-}
-
-export interface SearchInboxMessagesParams {
-    /** Searches to, from, and subject for all messages on this account, limited to 100 results. */
-    query?: string;
-}
-
-export interface ListDomainMessagesParams {
-    /** Return messages returned up to this UTC date */
-    until?: Date;
-    /** Limit results to this many */
-    limit?: Limit;
-    /** Domain */
-    domain: DomainString;
-}
-
-export interface ListPublicAttachmentsParams {
-    /** Date in ISO 8601 */
-    startDate: Date;
-    /** Date in ISO 8601 */
-    endDate: Date;
-    /** How many items to skip (like paging) */
-    skip?: Skip;
-    /** Limit results to this many */
-    limit?: Limit;
-}
-
-export interface ListTopPublicAddressesParams {
-    /** Date in ISO 8601 */
-    startDate?: Date;
-    /** Date in ISO 8601 */
-    endDate?: Date;
-    /** How many items to skip (like paging) */
-    skip?: Skip;
-    /** Limit results to this many */
-    limit?: Limit;
-}
-
-export interface ListTopPublicSendersParams {
-    /** Date in ISO 8601 */
-    startDate?: Date;
-    /** Date in ISO 8601 */
-    endDate?: Date;
-    /** How many items to skip (like paging) */
-    skip?: Skip;
-    /** Limit results to this many */
-    limit?: Limit;
-}
-
-export interface ListTopPublicDomainsParams {
-    /** Date in ISO 8601 */
-    startDate?: Date;
-    /** Date in ISO 8601 */
-    endDate?: Date;
-    /** How many items to skip (like paging) */
-    skip?: Skip;
-    /** Limit results to this many */
-    limit?: Limit;
-}
-
-export interface DoNotUseWebSocketDocsOnlyParams {
-    /** Mailsac-Key in the `?key=` querystring */
-    key?: string;
-    /**
-     * Private addresses or domains which are enabled for web socket messages
-     * @example "anything_123@mailsac.com,mail.mydomain.com"
-     */
-    addresses?: string;
-}
-
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse, HeadersDefaults, ResponseType } from "axios";
 import axios from "axios";
 
@@ -995,7 +839,13 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
          * @request DELETE:/addresses/{email}
          * @secure
          */
-        deleteAddress: ({ email, ...query }: DeleteAddressParams, params: RequestParams = {}) =>
+        deleteAddress: (
+            email: EmailString,
+            query?: {
+                deleteAddressMessages?: boolean;
+            },
+            params: RequestParams = {},
+        ) =>
             this.request<void, ErrorResponseBody>({
                 path: `/addresses/${email}`,
                 method: "DELETE",
@@ -1128,7 +978,16 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
          * @request GET:/addresses/{email}/messages
          * @secure
          */
-        listMessages: ({ email, ...query }: ListMessagesParams, params: RequestParams = {}) =>
+        listMessages: (
+            email: EmailString,
+            query?: {
+                /** Return messages returned up to this UTC date */
+                until?: Date;
+                /** Limit results to this many */
+                limit?: Limit;
+            },
+            params: RequestParams = {},
+        ) =>
             this.request<EmailMessageShort, ErrorResponseBody>({
                 path: `/addresses/${email}/messages`,
                 method: "GET",
@@ -1147,7 +1006,16 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
          * @request DELETE:/addresses/{email}/messages
          * @secure
          */
-        deleteAllMessages: ({ email, ...query }: DeleteAllMessagesParams, params: RequestParams = {}) =>
+        deleteAllMessages: (
+            email: EmailString,
+            query?: {
+                /** Return messages returned up to this UTC date */
+                until?: Date;
+                /** Limit results to this many */
+                limit?: Limit;
+            },
+            params: RequestParams = {},
+        ) =>
             this.request<void, ErrorResponseBody>({
                 path: `/addresses/${email}/messages`,
                 method: "DELETE",
@@ -1229,7 +1097,15 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
          * @request GET:/raw/{email}/{messageId}
          * @secure
          */
-        getFullRawMessage: ({ email, messageId, ...query }: GetFullRawMessageParams, params: RequestParams = {}) =>
+        getFullRawMessage: (
+            email: EmailString,
+            messageId: MessageId,
+            query?: {
+                /** Download to browser */
+                download?: 1;
+            },
+            params: RequestParams = {},
+        ) =>
             this.request<DomainString, ErrorResponseBody>({
                 path: `/raw/${email}/${messageId}`,
                 method: "GET",
@@ -1247,7 +1123,16 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
          * @request GET:/addresses/{email}/messages/{messageId}/headers
          * @secure
          */
-        getHeaders: ({ email, messageId, ...query }: GetHeadersParams, params: RequestParams = {}) =>
+        getHeaders: (
+            email: EmailString,
+            messageId: MessageId,
+            query?: {
+                /** Download to browser */
+                download?: 1;
+                messageHeadersFormat?: "json" | "json-ordered" | "plain";
+            },
+            params: RequestParams = {},
+        ) =>
             this.request<MessageHeaders, ErrorResponseBody>({
                 path: `/addresses/${email}/messages/${messageId}/headers`,
                 method: "GET",
@@ -1265,7 +1150,15 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
          * @request GET:/dirty/{email}/{messageId}
          * @secure
          */
-        getBodyDirty: ({ email, messageId, ...query }: GetBodyDirtyParams, params: RequestParams = {}) =>
+        getBodyDirty: (
+            email: EmailString,
+            messageId: MessageId,
+            query?: {
+                /** Download to browser */
+                download?: 1;
+            },
+            params: RequestParams = {},
+        ) =>
             this.request<DomainString, ErrorResponseBody>({
                 path: `/dirty/${email}/${messageId}`,
                 method: "GET",
@@ -1283,7 +1176,15 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
          * @request GET:/body/{email}/{messageId}
          * @secure
          */
-        getBodySanitized: ({ email, messageId, ...query }: GetBodySanitizedParams, params: RequestParams = {}) =>
+        getBodySanitized: (
+            email: EmailString,
+            messageId: MessageId,
+            query?: {
+                /** Download to browser */
+                download?: 1;
+            },
+            params: RequestParams = {},
+        ) =>
             this.request<DomainString, ErrorResponseBody>({
                 path: `/body/${email}/${messageId}`,
                 method: "GET",
@@ -1301,7 +1202,15 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
          * @request GET:/text/{email}/{messageId}
          * @secure
          */
-        getBodyPlainText: ({ email, messageId, ...query }: GetBodyPlainTextParams, params: RequestParams = {}) =>
+        getBodyPlainText: (
+            email: EmailString,
+            messageId: MessageId,
+            query?: {
+                /** Download to browser */
+                download?: 1;
+            },
+            params: RequestParams = {},
+        ) =>
             this.request<DomainString, ErrorResponseBody>({
                 path: `/text/${email}/${messageId}`,
                 method: "GET",
@@ -1456,7 +1365,17 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
          * @request GET:/inbox
          * @secure
          */
-        listInboxMessages: (query: ListInboxMessagesParams, params: RequestParams = {}) =>
+        listInboxMessages: (
+            query?: {
+                /** Limit results to this many */
+                limit?: Limit;
+                /** Only fetch messages since this date */
+                since?: Date;
+                /** How many items to skip (like paging) */
+                skip?: Skip;
+            },
+            params: RequestParams = {},
+        ) =>
             this.request<
                 {
                     messages?: EmailMessageShort[];
@@ -1483,7 +1402,17 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
          * @request GET:/inbox-filter
          * @secure
          */
-        filterInboxMessages: (query: FilterInboxMessagesParams, params: RequestParams = {}) =>
+        filterInboxMessages: (
+            query?: {
+                /** Messages must include this text in the subject line */
+                andSubjectIncludes?: string;
+                /** Messages must include this text in FROM envelope */
+                andFrom?: string;
+                /** Messages must include this text in TO envelope or the `message.inbox` is equal to this value */
+                andTo?: string;
+            },
+            params: RequestParams = {},
+        ) =>
             this.request<
                 {
                     messages?: EmailMessageShort[];
@@ -1507,7 +1436,13 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
          * @request GET:/inbox-search
          * @secure
          */
-        searchInboxMessages: (query: SearchInboxMessagesParams, params: RequestParams = {}) =>
+        searchInboxMessages: (
+            query?: {
+                /** Searches to, from, and subject for all messages on this account, limited to 100 results. */
+                query?: string;
+            },
+            params: RequestParams = {},
+        ) =>
             this.request<
                 {
                     query?: string;
@@ -1532,7 +1467,16 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
          * @request GET:/domains/{domain}/messages
          * @secure
          */
-        listDomainMessages: ({ domain, ...query }: ListDomainMessagesParams, params: RequestParams = {}) =>
+        listDomainMessages: (
+            domain: DomainString,
+            query?: {
+                /** Return messages returned up to this UTC date */
+                until?: Date;
+                /** Limit results to this many */
+                limit?: Limit;
+            },
+            params: RequestParams = {},
+        ) =>
             this.request<EmailMessageShort, ErrorResponseBody>({
                 path: `/domains/${domain}/messages`,
                 method: "GET",
@@ -1662,7 +1606,19 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
          * @request GET:/mailstats/common-attachments
          * @secure
          */
-        listPublicAttachments: (query: ListPublicAttachmentsParams, params: RequestParams = {}) =>
+        listPublicAttachments: (
+            query: {
+                /** Date in ISO 8601 */
+                startDate: Date;
+                /** Date in ISO 8601 */
+                endDate: Date;
+                /** How many items to skip (like paging) */
+                skip?: Skip;
+                /** Limit results to this many */
+                limit?: Limit;
+            },
+            params: RequestParams = {},
+        ) =>
             this.request<CommonAttachments[], ErrorResponseBody>({
                 path: `/mailstats/common-attachments`,
                 method: "GET",
@@ -1740,7 +1696,19 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
          * @request GET:/mailstats/top-addresses
          * @secure
          */
-        listTopPublicAddresses: (query: ListTopPublicAddressesParams, params: RequestParams = {}) =>
+        listTopPublicAddresses: (
+            query?: {
+                /** Date in ISO 8601 */
+                startDate?: Date;
+                /** Date in ISO 8601 */
+                endDate?: Date;
+                /** How many items to skip (like paging) */
+                skip?: Skip;
+                /** Limit results to this many */
+                limit?: Limit;
+            },
+            params: RequestParams = {},
+        ) =>
             this.request<
                 {
                     /** email address */
@@ -1767,7 +1735,19 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
          * @request GET:/mailstats/top-senders
          * @secure
          */
-        listTopPublicSenders: (query: ListTopPublicSendersParams, params: RequestParams = {}) =>
+        listTopPublicSenders: (
+            query?: {
+                /** Date in ISO 8601 */
+                startDate?: Date;
+                /** Date in ISO 8601 */
+                endDate?: Date;
+                /** How many items to skip (like paging) */
+                skip?: Skip;
+                /** Limit results to this many */
+                limit?: Limit;
+            },
+            params: RequestParams = {},
+        ) =>
             this.request<
                 {
                     /** email address */
@@ -1794,7 +1774,19 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
          * @request GET:/mailstats/top-domains
          * @secure
          */
-        listTopPublicDomains: (query: ListTopPublicDomainsParams, params: RequestParams = {}) =>
+        listTopPublicDomains: (
+            query?: {
+                /** Date in ISO 8601 */
+                startDate?: Date;
+                /** Date in ISO 8601 */
+                endDate?: Date;
+                /** How many items to skip (like paging) */
+                skip?: Skip;
+                /** Limit results to this many */
+                limit?: Limit;
+            },
+            params: RequestParams = {},
+        ) =>
             this.request<
                 {
                     /**
@@ -1865,7 +1857,18 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
          * @summary Connect a web socket to wss://sock.mailsac.com/incoming-messages
          * @request POST:/custom_web_sockets
          */
-        doNotUseWebSocketDocsOnly: (query: DoNotUseWebSocketDocsOnlyParams, params: RequestParams = {}) =>
+        doNotUseWebSocketDocsOnly: (
+            query?: {
+                /** Mailsac-Key in the `?key=` querystring */
+                key?: string;
+                /**
+                 * Private addresses or domains which are enabled for web socket messages
+                 * @example "anything_123@mailsac.com,mail.mydomain.com"
+                 */
+                addresses?: string;
+            },
+            params: RequestParams = {},
+        ) =>
             this.request<any, void>({
                 path: `/custom_web_sockets`,
                 method: "POST",

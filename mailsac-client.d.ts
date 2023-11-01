@@ -520,145 +520,6 @@ export type Skip = number;
  * @default 20
  */
 export type Limit = number;
-export interface DeleteAddressParams {
-    deleteAddressMessages?: boolean;
-    /** Email address */
-    email: EmailString;
-}
-export interface ListMessagesParams {
-    /** Return messages returned up to this UTC date */
-    until?: Date;
-    /** Limit results to this many */
-    limit?: Limit;
-    /** Email address */
-    email: EmailString;
-}
-export interface DeleteAllMessagesParams {
-    /** Return messages returned up to this UTC date */
-    until?: Date;
-    /** Limit results to this many */
-    limit?: Limit;
-    /** Email address */
-    email: EmailString;
-}
-export interface GetFullRawMessageParams {
-    /** Download to browser */
-    download?: 1;
-    /** Email address */
-    email: EmailString;
-    /** Mailsac-generated globally unique message identifier */
-    messageId: MessageId;
-}
-export interface GetHeadersParams {
-    /** Download to browser */
-    download?: 1;
-    messageHeadersFormat?: "json" | "json-ordered" | "plain";
-    /** Email address */
-    email: EmailString;
-    /** Mailsac-generated globally unique message identifier */
-    messageId: MessageId;
-}
-export interface GetBodyDirtyParams {
-    /** Download to browser */
-    download?: 1;
-    /** Email address */
-    email: EmailString;
-    /** Mailsac-generated globally unique message identifier */
-    messageId: MessageId;
-}
-export interface GetBodySanitizedParams {
-    /** Download to browser */
-    download?: 1;
-    /** Email address */
-    email: EmailString;
-    /** Mailsac-generated globally unique message identifier */
-    messageId: MessageId;
-}
-export interface GetBodyPlainTextParams {
-    /** Download to browser */
-    download?: 1;
-    /** Email address */
-    email: EmailString;
-    /** Mailsac-generated globally unique message identifier */
-    messageId: MessageId;
-}
-export interface ListInboxMessagesParams {
-    /** Limit results to this many */
-    limit?: Limit;
-    /** Only fetch messages since this date */
-    since?: Date;
-    /** How many items to skip (like paging) */
-    skip?: Skip;
-}
-export interface FilterInboxMessagesParams {
-    /** Messages must include this text in the subject line */
-    andSubjectIncludes?: string;
-    /** Messages must include this text in FROM envelope */
-    andFrom?: string;
-    /** Messages must include this text in TO envelope or the `message.inbox` is equal to this value */
-    andTo?: string;
-}
-export interface SearchInboxMessagesParams {
-    /** Searches to, from, and subject for all messages on this account, limited to 100 results. */
-    query?: string;
-}
-export interface ListDomainMessagesParams {
-    /** Return messages returned up to this UTC date */
-    until?: Date;
-    /** Limit results to this many */
-    limit?: Limit;
-    /** Domain */
-    domain: DomainString;
-}
-export interface ListPublicAttachmentsParams {
-    /** Date in ISO 8601 */
-    startDate: Date;
-    /** Date in ISO 8601 */
-    endDate: Date;
-    /** How many items to skip (like paging) */
-    skip?: Skip;
-    /** Limit results to this many */
-    limit?: Limit;
-}
-export interface ListTopPublicAddressesParams {
-    /** Date in ISO 8601 */
-    startDate?: Date;
-    /** Date in ISO 8601 */
-    endDate?: Date;
-    /** How many items to skip (like paging) */
-    skip?: Skip;
-    /** Limit results to this many */
-    limit?: Limit;
-}
-export interface ListTopPublicSendersParams {
-    /** Date in ISO 8601 */
-    startDate?: Date;
-    /** Date in ISO 8601 */
-    endDate?: Date;
-    /** How many items to skip (like paging) */
-    skip?: Skip;
-    /** Limit results to this many */
-    limit?: Limit;
-}
-export interface ListTopPublicDomainsParams {
-    /** Date in ISO 8601 */
-    startDate?: Date;
-    /** Date in ISO 8601 */
-    endDate?: Date;
-    /** How many items to skip (like paging) */
-    skip?: Skip;
-    /** Limit results to this many */
-    limit?: Limit;
-}
-export interface DoNotUseWebSocketDocsOnlyParams {
-    /** Mailsac-Key in the `?key=` querystring */
-    key?: string;
-    /**
-     * Private addresses or domains which are enabled for web socket messages
-     * @example "anything_123@mailsac.com,mail.mydomain.com"
-     */
-    addresses?: string;
-}
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse, ResponseType } from "axios";
 export type QueryParamsType = Record<string | number, any>;
 export interface FullRequestParams extends Omit<AxiosRequestConfig, "data" | "params" | "url" | "responseType"> {
@@ -792,7 +653,9 @@ export declare class Mailsac<SecurityDataType extends unknown> extends HttpClien
          * @request DELETE:/addresses/{email}
          * @secure
          */
-        deleteAddress: ({ email, ...query }: DeleteAddressParams, params?: RequestParams) => Promise<AxiosResponse<void, any>>;
+        deleteAddress: (email: EmailString, query?: {
+            deleteAddressMessages?: boolean;
+        }, params?: RequestParams) => Promise<AxiosResponse<void, any>>;
         /**
          * No description
          *
@@ -867,7 +730,12 @@ export declare class Mailsac<SecurityDataType extends unknown> extends HttpClien
          * @request GET:/addresses/{email}/messages
          * @secure
          */
-        listMessages: ({ email, ...query }: ListMessagesParams, params?: RequestParams) => Promise<AxiosResponse<EmailMessageShort, any>>;
+        listMessages: (email: EmailString, query?: {
+            /** Return messages returned up to this UTC date */
+            until?: Date;
+            /** Limit results to this many */
+            limit?: Limit;
+        }, params?: RequestParams) => Promise<AxiosResponse<EmailMessageShort, any>>;
         /**
          * @description This deletes all messages for a specific email address. The address must be an owned address or an address in a owned domain. Starred messages will not be deleted. Use `DELETE /addresses/{email}/messages/{messageId}` to remove starred messages or unstar the messages before calling this route.
          *
@@ -877,7 +745,12 @@ export declare class Mailsac<SecurityDataType extends unknown> extends HttpClien
          * @request DELETE:/addresses/{email}/messages
          * @secure
          */
-        deleteAllMessages: ({ email, ...query }: DeleteAllMessagesParams, params?: RequestParams) => Promise<AxiosResponse<void, any>>;
+        deleteAllMessages: (email: EmailString, query?: {
+            /** Return messages returned up to this UTC date */
+            until?: Date;
+            /** Limit results to this many */
+            limit?: Limit;
+        }, params?: RequestParams) => Promise<AxiosResponse<void, any>>;
         /**
          * @description Get a list of messages that have been saved and made private for the entire account using the "star message" feature. Messages recieved via the Capture Service will also show up as starred IF the `capturePrivate` flag on the account is enabled.
          *
@@ -924,7 +797,10 @@ export declare class Mailsac<SecurityDataType extends unknown> extends HttpClien
          * @request GET:/raw/{email}/{messageId}
          * @secure
          */
-        getFullRawMessage: ({ email, messageId, ...query }: GetFullRawMessageParams, params?: RequestParams) => Promise<AxiosResponse<string, any>>;
+        getFullRawMessage: (email: EmailString, messageId: MessageId, query?: {
+            /** Download to browser */
+            download?: 1;
+        }, params?: RequestParams) => Promise<AxiosResponse<string, any>>;
         /**
          * @description Returns pre-parsed message headers in one of 3 formats - `json`, `json-ordered`, or `plain`. If no querystring parameter is provided, the default format will be `json`. Every email is different; fields in the below examples are not guaranteed to exist.
          *
@@ -934,7 +810,11 @@ export declare class Mailsac<SecurityDataType extends unknown> extends HttpClien
          * @request GET:/addresses/{email}/messages/{messageId}/headers
          * @secure
          */
-        getHeaders: ({ email, messageId, ...query }: GetHeadersParams, params?: RequestParams) => Promise<AxiosResponse<MessageHeaders, any>>;
+        getHeaders: (email: EmailString, messageId: MessageId, query?: {
+            /** Download to browser */
+            download?: 1;
+            messageHeadersFormat?: "json" | "json-ordered" | "plain";
+        }, params?: RequestParams) => Promise<AxiosResponse<MessageHeaders, any>>;
         /**
          * @description Get a message's HTML content. Attached images are inlined and nothing has been stripped. When no HTML body was sent in the original message, a simple HTML body will be created. Use the querystring param ?download=1 to trigger file download in browser.
          *
@@ -944,7 +824,10 @@ export declare class Mailsac<SecurityDataType extends unknown> extends HttpClien
          * @request GET:/dirty/{email}/{messageId}
          * @secure
          */
-        getBodyDirty: ({ email, messageId, ...query }: GetBodyDirtyParams, params?: RequestParams) => Promise<AxiosResponse<string, any>>;
+        getBodyDirty: (email: EmailString, messageId: MessageId, query?: {
+            /** Download to browser */
+            download?: 1;
+        }, params?: RequestParams) => Promise<AxiosResponse<string, any>>;
         /**
          * @description Get safe HTML from an email message. Scripts, images and links are stripped out. This HTML is safer to render than the potentially "dirty" original HTML. When no HTML body was sent in the original message, a simple HTML body will be created. Use the querystring param ?download=1 to trigger file download in browser.
          *
@@ -954,7 +837,10 @@ export declare class Mailsac<SecurityDataType extends unknown> extends HttpClien
          * @request GET:/body/{email}/{messageId}
          * @secure
          */
-        getBodySanitized: ({ email, messageId, ...query }: GetBodySanitizedParams, params?: RequestParams) => Promise<AxiosResponse<string, any>>;
+        getBodySanitized: (email: EmailString, messageId: MessageId, query?: {
+            /** Download to browser */
+            download?: 1;
+        }, params?: RequestParams) => Promise<AxiosResponse<string, any>>;
         /**
          * @description Get a message's text content. If the original message only contained HTML, a simple plain text body will be generated. HTTP links in the plain text email will be available when fetching the message's metadata at the `message.links[]` property. Use the querystring param ?download=1 to trigger file download in browser.
          *
@@ -964,7 +850,10 @@ export declare class Mailsac<SecurityDataType extends unknown> extends HttpClien
          * @request GET:/text/{email}/{messageId}
          * @secure
          */
-        getBodyPlainText: ({ email, messageId, ...query }: GetBodyPlainTextParams, params?: RequestParams) => Promise<AxiosResponse<string, any>>;
+        getBodyPlainText: (email: EmailString, messageId: MessageId, query?: {
+            /** Download to browser */
+            download?: 1;
+        }, params?: RequestParams) => Promise<AxiosResponse<string, any>>;
         /**
          * @description Toggle a message's *starred* status so it will not be automatically recycled when the account's message storage limit is reached. There is no PUT body. It returns only the message metadata.
          *
@@ -1044,7 +933,14 @@ export declare class Mailsac<SecurityDataType extends unknown> extends HttpClien
          * @request GET:/inbox
          * @secure
          */
-        listInboxMessages: (query: ListInboxMessagesParams, params?: RequestParams) => Promise<AxiosResponse<{
+        listInboxMessages: (query?: {
+            /** Limit results to this many */
+            limit?: Limit;
+            /** Only fetch messages since this date */
+            since?: Date;
+            /** How many items to skip (like paging) */
+            skip?: Skip;
+        }, params?: RequestParams) => Promise<AxiosResponse<{
             messages?: EmailMessageShort[];
             unread?: number;
             limit?: number;
@@ -1059,7 +955,14 @@ export declare class Mailsac<SecurityDataType extends unknown> extends HttpClien
          * @request GET:/inbox-filter
          * @secure
          */
-        filterInboxMessages: (query: FilterInboxMessagesParams, params?: RequestParams) => Promise<AxiosResponse<{
+        filterInboxMessages: (query?: {
+            /** Messages must include this text in the subject line */
+            andSubjectIncludes?: string;
+            /** Messages must include this text in FROM envelope */
+            andFrom?: string;
+            /** Messages must include this text in TO envelope or the `message.inbox` is equal to this value */
+            andTo?: string;
+        }, params?: RequestParams) => Promise<AxiosResponse<{
             messages?: EmailMessageShort[];
         }, any>>;
         /**
@@ -1071,7 +974,10 @@ export declare class Mailsac<SecurityDataType extends unknown> extends HttpClien
          * @request GET:/inbox-search
          * @secure
          */
-        searchInboxMessages: (query: SearchInboxMessagesParams, params?: RequestParams) => Promise<AxiosResponse<{
+        searchInboxMessages: (query?: {
+            /** Searches to, from, and subject for all messages on this account, limited to 100 results. */
+            query?: string;
+        }, params?: RequestParams) => Promise<AxiosResponse<{
             query?: string;
             messages?: EmailMessageShort[];
         }, any>>;
@@ -1084,7 +990,12 @@ export declare class Mailsac<SecurityDataType extends unknown> extends HttpClien
          * @request GET:/domains/{domain}/messages
          * @secure
          */
-        listDomainMessages: ({ domain, ...query }: ListDomainMessagesParams, params?: RequestParams) => Promise<AxiosResponse<EmailMessageShort, any>>;
+        listDomainMessages: (domain: DomainString, query?: {
+            /** Return messages returned up to this UTC date */
+            until?: Date;
+            /** Limit results to this many */
+            limit?: Limit;
+        }, params?: RequestParams) => Promise<AxiosResponse<EmailMessageShort, any>>;
         /**
          * @description Delete all messages for a specifc domain. Starred messages will be deleted. The domain must be owned domain.
          *
@@ -1160,7 +1071,16 @@ export declare class Mailsac<SecurityDataType extends unknown> extends HttpClien
          * @request GET:/mailstats/common-attachments
          * @secure
          */
-        listPublicAttachments: (query: ListPublicAttachmentsParams, params?: RequestParams) => Promise<AxiosResponse<CommonAttachments[], any>>;
+        listPublicAttachments: (query: {
+            /** Date in ISO 8601 */
+            startDate: Date;
+            /** Date in ISO 8601 */
+            endDate: Date;
+            /** How many items to skip (like paging) */
+            skip?: Skip;
+            /** Limit results to this many */
+            limit?: Limit;
+        }, params?: RequestParams) => Promise<AxiosResponse<CommonAttachments[], any>>;
         /**
          * @description Provides count of attachments by md5 sum Responds with 'Failed to fetch' in swagger editor, works in curl with generated example
          *
@@ -1204,7 +1124,16 @@ export declare class Mailsac<SecurityDataType extends unknown> extends HttpClien
          * @request GET:/mailstats/top-addresses
          * @secure
          */
-        listTopPublicAddresses: (query: ListTopPublicAddressesParams, params?: RequestParams) => Promise<AxiosResponse<{
+        listTopPublicAddresses: (query?: {
+            /** Date in ISO 8601 */
+            startDate?: Date;
+            /** Date in ISO 8601 */
+            endDate?: Date;
+            /** How many items to skip (like paging) */
+            skip?: Skip;
+            /** Limit results to this many */
+            limit?: Limit;
+        }, params?: RequestParams) => Promise<AxiosResponse<{
             /** email address */
             _id?: EmailString;
             /** count of messages */
@@ -1219,7 +1148,16 @@ export declare class Mailsac<SecurityDataType extends unknown> extends HttpClien
          * @request GET:/mailstats/top-senders
          * @secure
          */
-        listTopPublicSenders: (query: ListTopPublicSendersParams, params?: RequestParams) => Promise<AxiosResponse<{
+        listTopPublicSenders: (query?: {
+            /** Date in ISO 8601 */
+            startDate?: Date;
+            /** Date in ISO 8601 */
+            endDate?: Date;
+            /** How many items to skip (like paging) */
+            skip?: Skip;
+            /** Limit results to this many */
+            limit?: Limit;
+        }, params?: RequestParams) => Promise<AxiosResponse<{
             /** email address */
             _id?: EmailString;
             /** count of messages */
@@ -1234,7 +1172,16 @@ export declare class Mailsac<SecurityDataType extends unknown> extends HttpClien
          * @request GET:/mailstats/top-domains
          * @secure
          */
-        listTopPublicDomains: (query: ListTopPublicDomainsParams, params?: RequestParams) => Promise<AxiosResponse<{
+        listTopPublicDomains: (query?: {
+            /** Date in ISO 8601 */
+            startDate?: Date;
+            /** Date in ISO 8601 */
+            endDate?: Date;
+            /** How many items to skip (like paging) */
+            skip?: Skip;
+            /** Limit results to this many */
+            limit?: Limit;
+        }, params?: RequestParams) => Promise<AxiosResponse<{
             /**
              * domain other than mailsac.com
              * @format domain
@@ -1275,7 +1222,15 @@ export declare class Mailsac<SecurityDataType extends unknown> extends HttpClien
          * @summary Connect a web socket to wss://sock.mailsac.com/incoming-messages
          * @request POST:/custom_web_sockets
          */
-        doNotUseWebSocketDocsOnly: (query: DoNotUseWebSocketDocsOnlyParams, params?: RequestParams) => Promise<AxiosResponse<any, any>>;
+        doNotUseWebSocketDocsOnly: (query?: {
+            /** Mailsac-Key in the `?key=` querystring */
+            key?: string;
+            /**
+             * Private addresses or domains which are enabled for web socket messages
+             * @example "anything_123@mailsac.com,mail.mydomain.com"
+             */
+            addresses?: string;
+        }, params?: RequestParams) => Promise<AxiosResponse<any, any>>;
     };
     webhooks: {
         /**

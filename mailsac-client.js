@@ -201,11 +201,7 @@ class Mailsac extends HttpClient {
              * @request DELETE:/addresses/{email}
              * @secure
              */
-            deleteAddress: (_a, params) => {
-                var { email } = _a, query = __rest(_a, ["email"]);
-                if (params === void 0) { params = {}; }
-                return this.request(Object.assign({ path: `/addresses/${email}`, method: "DELETE", query: query, secure: true }, params));
-            },
+            deleteAddress: (email, query, params = {}) => this.request(Object.assign({ path: `/addresses/${email}`, method: "DELETE", query: query, secure: true }, params)),
             /**
              * No description
              *
@@ -269,11 +265,7 @@ class Mailsac extends HttpClient {
              * @request GET:/addresses/{email}/messages
              * @secure
              */
-            listMessages: (_a, params) => {
-                var { email } = _a, query = __rest(_a, ["email"]);
-                if (params === void 0) { params = {}; }
-                return this.request(Object.assign({ path: `/addresses/${email}/messages`, method: "GET", query: query, secure: true, format: "json" }, params));
-            },
+            listMessages: (email, query, params = {}) => this.request(Object.assign({ path: `/addresses/${email}/messages`, method: "GET", query: query, secure: true, format: "json" }, params)),
             /**
              * @description This deletes all messages for a specific email address. The address must be an owned address or an address in a owned domain. Starred messages will not be deleted. Use `DELETE /addresses/{email}/messages/{messageId}` to remove starred messages or unstar the messages before calling this route.
              *
@@ -283,11 +275,7 @@ class Mailsac extends HttpClient {
              * @request DELETE:/addresses/{email}/messages
              * @secure
              */
-            deleteAllMessages: (_a, params) => {
-                var { email } = _a, query = __rest(_a, ["email"]);
-                if (params === void 0) { params = {}; }
-                return this.request(Object.assign({ path: `/addresses/${email}/messages`, method: "DELETE", query: query, secure: true }, params));
-            },
+            deleteAllMessages: (email, query, params = {}) => this.request(Object.assign({ path: `/addresses/${email}/messages`, method: "DELETE", query: query, secure: true }, params)),
             /**
              * @description Get a list of messages that have been saved and made private for the entire account using the "star message" feature. Messages recieved via the Capture Service will also show up as starred IF the `capturePrivate` flag on the account is enabled.
              *
@@ -327,11 +315,7 @@ class Mailsac extends HttpClient {
              * @request GET:/raw/{email}/{messageId}
              * @secure
              */
-            getFullRawMessage: (_a, params) => {
-                var { email, messageId } = _a, query = __rest(_a, ["email", "messageId"]);
-                if (params === void 0) { params = {}; }
-                return this.request(Object.assign({ path: `/raw/${email}/${messageId}`, method: "GET", query: query, secure: true }, params));
-            },
+            getFullRawMessage: (email, messageId, query, params = {}) => this.request(Object.assign({ path: `/raw/${email}/${messageId}`, method: "GET", query: query, secure: true }, params)),
             /**
              * @description Returns pre-parsed message headers in one of 3 formats - `json`, `json-ordered`, or `plain`. If no querystring parameter is provided, the default format will be `json`. Every email is different; fields in the below examples are not guaranteed to exist.
              *
@@ -341,11 +325,7 @@ class Mailsac extends HttpClient {
              * @request GET:/addresses/{email}/messages/{messageId}/headers
              * @secure
              */
-            getHeaders: (_a, params) => {
-                var { email, messageId } = _a, query = __rest(_a, ["email", "messageId"]);
-                if (params === void 0) { params = {}; }
-                return this.request(Object.assign({ path: `/addresses/${email}/messages/${messageId}/headers`, method: "GET", query: query, secure: true }, params));
-            },
+            getHeaders: (email, messageId, query, params = {}) => this.request(Object.assign({ path: `/addresses/${email}/messages/${messageId}/headers`, method: "GET", query: query, secure: true }, params)),
             /**
              * @description Get a message's HTML content. Attached images are inlined and nothing has been stripped. When no HTML body was sent in the original message, a simple HTML body will be created. Use the querystring param ?download=1 to trigger file download in browser.
              *
@@ -355,11 +335,7 @@ class Mailsac extends HttpClient {
              * @request GET:/dirty/{email}/{messageId}
              * @secure
              */
-            getBodyDirty: (_a, params) => {
-                var { email, messageId } = _a, query = __rest(_a, ["email", "messageId"]);
-                if (params === void 0) { params = {}; }
-                return this.request(Object.assign({ path: `/dirty/${email}/${messageId}`, method: "GET", query: query, secure: true }, params));
-            },
+            getBodyDirty: (email, messageId, query, params = {}) => this.request(Object.assign({ path: `/dirty/${email}/${messageId}`, method: "GET", query: query, secure: true }, params)),
             /**
              * @description Get safe HTML from an email message. Scripts, images and links are stripped out. This HTML is safer to render than the potentially "dirty" original HTML. When no HTML body was sent in the original message, a simple HTML body will be created. Use the querystring param ?download=1 to trigger file download in browser.
              *
@@ -369,11 +345,7 @@ class Mailsac extends HttpClient {
              * @request GET:/body/{email}/{messageId}
              * @secure
              */
-            getBodySanitized: (_a, params) => {
-                var { email, messageId } = _a, query = __rest(_a, ["email", "messageId"]);
-                if (params === void 0) { params = {}; }
-                return this.request(Object.assign({ path: `/body/${email}/${messageId}`, method: "GET", query: query, secure: true }, params));
-            },
+            getBodySanitized: (email, messageId, query, params = {}) => this.request(Object.assign({ path: `/body/${email}/${messageId}`, method: "GET", query: query, secure: true }, params)),
             /**
              * @description Get a message's text content. If the original message only contained HTML, a simple plain text body will be generated. HTTP links in the plain text email will be available when fetching the message's metadata at the `message.links[]` property. Use the querystring param ?download=1 to trigger file download in browser.
              *
@@ -383,11 +355,7 @@ class Mailsac extends HttpClient {
              * @request GET:/text/{email}/{messageId}
              * @secure
              */
-            getBodyPlainText: (_a, params) => {
-                var { email, messageId } = _a, query = __rest(_a, ["email", "messageId"]);
-                if (params === void 0) { params = {}; }
-                return this.request(Object.assign({ path: `/text/${email}/${messageId}`, method: "GET", query: query, secure: true }, params));
-            },
+            getBodyPlainText: (email, messageId, query, params = {}) => this.request(Object.assign({ path: `/text/${email}/${messageId}`, method: "GET", query: query, secure: true }, params)),
             /**
              * @description Toggle a message's *starred* status so it will not be automatically recycled when the account's message storage limit is reached. There is no PUT body. It returns only the message metadata.
              *
@@ -477,11 +445,7 @@ class Mailsac extends HttpClient {
              * @request GET:/domains/{domain}/messages
              * @secure
              */
-            listDomainMessages: (_a, params) => {
-                var { domain } = _a, query = __rest(_a, ["domain"]);
-                if (params === void 0) { params = {}; }
-                return this.request(Object.assign({ path: `/domains/${domain}/messages`, method: "GET", query: query, secure: true, format: "json" }, params));
-            },
+            listDomainMessages: (domain, query, params = {}) => this.request(Object.assign({ path: `/domains/${domain}/messages`, method: "GET", query: query, secure: true, format: "json" }, params)),
             /**
              * @description Delete all messages for a specifc domain. Starred messages will be deleted. The domain must be owned domain.
              *

@@ -8,7 +8,7 @@
 ### `addresses.checkAvailability(email, params = {})`
 ### `addresses.createAddress(email, data, params = {})`
 ### `addresses.createAddresses(data, params = {})`
-### `addresses.deleteAddress(_a, params)`
+### `addresses.deleteAddress(email, query, params = {})`
 ### `addresses.getAddress(email, params = {})`
 ### `addresses.listAddresses(params = {})`
 ### `addresses.updateAddress(email, data, params = {})`
@@ -39,19 +39,19 @@
 ### `messages.addMessageLabel(email, messageId, label, params = {})`
 ### `messages.countMessages(email, params = {})`
 ### `messages.deleteAllDomainMessages(domain, params = {})`
-### `messages.deleteAllMessages(_a, params)`
+### `messages.deleteAllMessages(email, query, params = {})`
 ### `messages.deleteMessage(email, messageId, params = {})`
 ### `messages.deleteMessageLabel(email, messageId, label, params = {})`
 ### `messages.filterInboxMessages(query, params = {})`
-### `messages.getBodyDirty(_a, params)`
-### `messages.getBodyPlainText(_a, params)`
-### `messages.getBodySanitized(_a, params)`
-### `messages.getFullRawMessage(_a, params)`
-### `messages.getHeaders(_a, params)`
+### `messages.getBodyDirty(email, messageId, query, params = {})`
+### `messages.getBodyPlainText(email, messageId, query, params = {})`
+### `messages.getBodySanitized(email, messageId, query, params = {})`
+### `messages.getFullRawMessage(email, messageId, query, params = {})`
+### `messages.getHeaders(email, messageId, query, params = {})`
 ### `messages.getMessageMetadata(email, messageId, params = {})`
-### `messages.listDomainMessages(_a, params)`
+### `messages.listDomainMessages(domain, query, params = {})`
 ### `messages.listInboxMessages(query, params = {})`
-### `messages.listMessages(_a, params)`
+### `messages.listMessages(email, query, params = {})`
 ### `messages.listStarredMessages(params = {})`
 ### `messages.searchInboxMessages(query, params = {})`
 ### `messages.setMessageFolder(email, messageId, folder, params = {})`

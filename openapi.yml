@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  version: 1.0.2
+  version: 1.0.4
   title: mailsac API Specification
   x-logo:
     url: "/img/mailsac-logo-v2.png"
@@ -20,7 +20,7 @@ info:
 
     **Base API Endpoint**:
 
-    * `[https://mailsac.com/api/](https://mailsac.com/api/)`
+    * `https://mailsac.com/api/`
     * _All API documentation is relative to this endpoint._
 
     **OpenAPI Spec**:
@@ -43,7 +43,10 @@ info:
 
     [Privacy Policy](https://docs.mailsac.com/en/latest/about/privacy_policy.html)
 
-# servers: section will be automatically added by backend
+# servers: section will be automatically replaced by backend
+servers:
+  - url: https://mailsac.com/api
+    description: Mailsac API
 tags:
   # Authentication section is just at the top of the API, but is not really a tag.
   - name: 'Authentication Guide'
@@ -150,7 +153,7 @@ tags:
   - x-displayName: Email Addresses API
     name: Addresses
     description: |
-      This section contains APIs for creating and deleting private addresses, and configuring
+      This section contains APIs for creating and deleting enhanced private addresses, and configuring
       message routing.
 
       It is not always necessary to create an email address
@@ -203,15 +206,15 @@ paths:
       security:
         - APIKeyQueryParam: []
         - APIKeyHeader: []
-      summary: List all private email addresses
+      summary: List all enhanced email addresses
       description: |
-        Get an array of private inbox address objects for the account.
+        Get an array of enhanced private inbox address objects for the account.
 
         These addresses must be setup ("reserved") using `POST /api/addresses/:email`, or
         [on the Add Email Address page](https://mailsac.com/private-address).
       responses:
         '200':
-          description: List of private email forwarding address objects
+          description: List of enhanced address objects
           content:
             application/json:
               schema:
@@ -314,9 +317,9 @@ paths:
         - APIKeyHeader: []
       parameters:
         - $ref: '#/components/parameters/DeleteAddressMessagesFlag'
-      summary: 'Release a private email address'
+      summary: 'Release an enhanced email address'
       description: |
-        Removes this private address from ownership by the account. Any email received to the
+        Removes this enhanced private address from ownership by the account. Any email received to the
         address's inbox will be public in the future, unless the address was under a custom domain
         which is set private.
       responses:
@@ -356,9 +359,13 @@ paths:
       security:
         - APIKeyQueryParam: []
         - APIKeyHeader: []
-      summary: 'Reserve multiple private addresses'
+      summary: 'Reserve multiple enhanced addresses'
       description: |
-        Reserves multiple private addresses. The max addresses per request is 100.
+        Reserves multiple enhanced private addresses. The max addresses per request is 100.
+
+        It is not necessary to create enhanced addresses before receiving email. Enhanced addresses
+        are only necessary to forward messages to another email address, Slack, web sockets, webhooks,
+        or fetch messages over POP3.
       requestBody:
         required: true
         content:
@@ -376,7 +383,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/EmailAddressList'
         '400':
-          description: 'Not enough private address credits'
+          description: 'Not enough enhanced address credits'
           content:
             application/json:
               schema:
@@ -1269,7 +1276,8 @@ paths:
         - Attachments
       summary: Search for attachments
       description: |
-        Search for attachments that were received during the requested time period. Limited to non-private inboxes.
+        Search for attachments that were received during the requested time period. Limited to public
+        inboxes and messages not starred by a user.
 
         Responds with 'Failed to fetch' in swagger editor. Works in curl with generated example.
       security:
@@ -1522,7 +1530,7 @@ paths:
         in: query
         schema:
           type: string
-        description: 'Private addresses or domains which are enabled for web socket messages'
+        description: 'Enhanced addresses or domains which are enabled for web socket messages'
         example: 'anything_123@mailsac.com,mail.mydomain.com'
     post:
       operationId: _doNotUse_WebSocketDocsOnly
@@ -1637,7 +1645,7 @@ paths:
       description: |
         *Note: this does not work in Swagger UI.*
 
-        Webhook Forwarding is one of several options available for forwarding private addresses
+        Webhook Forwarding is one of several options available for enhanced addresses
         and custom domains (via catch-all addresses enabled under a custom domain).
 
         Forwarding to a Webhook can be configured by selecting Manage Email Addresses from the
@@ -1647,7 +1655,7 @@ paths:
         Troubleshoot webhooks using your account *Audit Logs*.
       responses:
         200:
-          description: No responses - webhooks are configured under private addresses.
+          description: No responses - webhooks are configured under enhanced addresses.
       callbacks:
         emailMessageWebhook:
           'https://your-server.com/endpoint':
@@ -2187,7 +2195,7 @@ components:
       properties:
         info:
           type: string
-          description: 'User configurable metadata about this private address.'
+          description: 'User configurable metadata about this enhanced private address.'
         forward:
           type: string
           description: >-
@@ -2425,7 +2433,7 @@ components:
           description: Setting which will apply a star to all captured emails.
         messageLimit:
           type: integer
-          description: 'Maximum allowed message history (starred messages + all messages on private addresses and domains)'
+          description: 'Maximum allowed message history (starred messages + all messages on enhanced addresses and domains)'
           example: 1000
         sendsRemaining:
           type: integer
@@ -2436,7 +2444,7 @@ components:
           description: 'Number of custom domain that the account is entitled to but has not yet reserved'
         privateAddressCredits:
           type: integer
-          description: 'Number of private addresses that the account is entitled to but has not yet reserved'
+          description: 'Number of enhanced addresses that the account is entitled to but has not yet reserved'
           example: 100
         whitelistAccess:
           type: integer
@@ -2472,6 +2480,9 @@ components:
         address:
           type: string
           description: 'Company address associated with account'
+        firehose:
+          type: integer
+          description: 'Entitlement flag indicating whether the account has access to the Firehose Web Socket API'
     CurrentUserStats:
       description: 'Describes current user stats'
       type: object
@@ -2496,12 +2507,12 @@ components:
           type: integer
           minimum: 0
           example: 100
-          description: 'Total messages on all private addresses and custom domains'
+          description: 'Total messages on all enhanced addresses and custom domains'
         inboxBytes:
           type: integer
           minimum: 0
           example: 1024
-          description: 'Sum size of all messages on private addresses and custom domains'
+          description: 'Sum size of all messages on enhanced addresses and custom domains'
         totalSent:
           type: integer
           minimum: 0

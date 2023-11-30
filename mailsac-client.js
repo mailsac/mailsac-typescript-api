@@ -77,7 +77,7 @@ class HttpClient {
             }
             return this.instance.request(Object.assign(Object.assign({}, requestParams), { headers: Object.assign(Object.assign({}, (requestParams.headers || {})), (type && type !== ContentType.FormData ? { "Content-Type": type } : {})), params: query, responseType: responseFormat, data: body, url: path }));
         });
-        this.instance = axios_1.default.create(Object.assign(Object.assign({}, axiosConfig), { baseURL: axiosConfig.baseURL || "" }));
+        this.instance = axios_1.default.create(Object.assign(Object.assign({}, axiosConfig), { baseURL: axiosConfig.baseURL || "https://mailsac.com/api" }));
         this.secure = secure;
         this.format = format;
         this.securityWorker = securityWorker;
@@ -109,7 +109,8 @@ class HttpClient {
 exports.HttpClient = HttpClient;
 /**
  * @title mailsac API Specification
- * @version 1.0.1
+ * @version 1.0.4
+ * @baseUrl https://mailsac.com/api
  *
  * ## About the API
  *
@@ -125,7 +126,7 @@ exports.HttpClient = HttpClient;
  *
  * **Base API Endpoint**:
  *
- * * `[https://mailsac.com/api/](https://mailsac.com/api/)`
+ * * `https://mailsac.com/api/`
  * * _All API documentation is relative to this endpoint._
  *
  * **OpenAPI Spec**:
@@ -153,11 +154,11 @@ class Mailsac extends HttpClient {
         super(...arguments);
         this.addresses = {
             /**
-             * @description Get an array of private inbox address objects for the account. These addresses must be setup ("reserved") using `POST /api/addresses/:email`, or [on the Add Email Address page](https://mailsac.com/private-address).
+             * @description Get an array of enhanced private inbox address objects for the account. These addresses must be setup ("reserved") using `POST /api/addresses/:email`, or [on the Add Email Address page](https://mailsac.com/private-address).
              *
              * @tags Addresses
              * @name ListAddresses
-             * @summary List all private email addresses
+             * @summary List all enhanced email addresses
              * @request GET:/addresses
              * @secure
              */
@@ -193,11 +194,11 @@ class Mailsac extends HttpClient {
              */
             updateAddress: (email, data, params = {}) => this.request(Object.assign({ path: `/addresses/${email}`, method: "PUT", body: data, secure: true, type: ContentType.Json }, params)),
             /**
-             * @description Removes this private address from ownership by the account. Any email received to the address's inbox will be public in the future, unless the address was under a custom domain which is set private.
+             * @description Removes this enhanced private address from ownership by the account. Any email received to the address's inbox will be public in the future, unless the address was under a custom domain which is set private.
              *
              * @tags Addresses
              * @name DeleteAddress
-             * @summary Release a private email address
+             * @summary Release an enhanced email address
              * @request DELETE:/addresses/{email}
              * @secure
              */
@@ -213,11 +214,11 @@ class Mailsac extends HttpClient {
              */
             checkAvailability: (email, params = {}) => this.request(Object.assign({ path: `/addresses/${email}/availability`, method: "GET", secure: true }, params)),
             /**
-             * @description Reserves multiple private addresses. The max addresses per request is 100.
+             * @description Reserves multiple enhanced private addresses. The max addresses per request is 100. It is not necessary to create enhanced addresses before receiving email. Enhanced addresses are only necessary to forward messages to another email address, Slack, web sockets, webhooks, or fetch messages over POP3.
              *
              * @tags Addresses
              * @name CreateAddresses
-             * @summary Reserve multiple private addresses
+             * @summary Reserve multiple enhanced addresses
              * @request POST:/private-addresses-bulk
              * @secure
              */
@@ -513,7 +514,7 @@ class Mailsac extends HttpClient {
              */
             downloadAttachment: (email, messageId, attachmentIdentifier, params = {}) => this.request(Object.assign({ path: `/addresses/${email}/messages/${messageId}/attachments/${attachmentIdentifier}`, method: "GET", secure: true }, params)),
             /**
-             * @description Search for attachments that were received during the requested time period. Limited to non-private inboxes. Responds with 'Failed to fetch' in swagger editor. Works in curl with generated example.
+             * @description Search for attachments that were received during the requested time period. Limited to public inboxes and messages not starred by a user. Responds with 'Failed to fetch' in swagger editor. Works in curl with generated example.
              *
              * @tags Attachments
              * @name ListPublicAttachments
@@ -618,7 +619,7 @@ class Mailsac extends HttpClient {
         };
         this.webhooks = {
             /**
-             * @description *Note: this does not work in Swagger UI.* Webhook Forwarding is one of several options available for forwarding private addresses and custom domains (via catch-all addresses enabled under a custom domain). Forwarding to a Webhook can be configured by selecting Manage Email Addresses from the Dashboard. Select the Settings button next to the email address to manage, then input the URL under Forward To Custom Webhook and select Save Settings. Troubleshoot webhooks using your account *Audit Logs*.
+             * @description *Note: this does not work in Swagger UI.* Webhook Forwarding is one of several options available for enhanced addresses and custom domains (via catch-all addresses enabled under a custom domain). Forwarding to a Webhook can be configured by selecting Manage Email Addresses from the Dashboard. Select the Settings button next to the email address to manage, then input the URL under Forward To Custom Webhook and select Save Settings. Troubleshoot webhooks using your account *Audit Logs*.
              *
              * @tags Webhooks
              * @name DoNotUseWebhookDocsOnly

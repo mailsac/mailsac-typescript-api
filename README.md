@@ -42,7 +42,7 @@ Then you can use the client to make requests:
 const messages = await mailsac.addresses.listMessages('test-public@mailsac.com');
 console.log({ messages }); // [{...}, {...}, ...]
 
-// reserve a private address - everybody starts with a free one.
+// reserve an enhanced private address - everybody starts with a free one.
 const address = await mailsac.addresses.createAddress('test-private@mailsac.com');
 console.log({ address }); // { _id: "test-private@mailsac-com", ... }
 const myAddresses = await mailsac.addresses.list();

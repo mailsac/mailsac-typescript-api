@@ -261,7 +261,7 @@ export interface EmailRecipient {
 
 /** body object to update address forwarding */
 export interface UpdatePrivateAddressForwarding {
-    /** User configurable metadata about this private address. */
+    /** User configurable metadata about this enhanced private address. */
     info?: string;
     /**
      * email address - SMTP forwarding / standard email forwarding - set to "" or null to disable forwarding
@@ -446,7 +446,7 @@ export interface CurrentUserInfo {
     /** Setting which will apply a star to all captured emails. */
     capturePrivate?: boolean;
     /**
-     * Maximum allowed message history (starred messages + all messages on private addresses and domains)
+     * Maximum allowed message history (starred messages + all messages on enhanced addresses and domains)
      * @example 1000
      */
     messageLimit?: number;
@@ -458,7 +458,7 @@ export interface CurrentUserInfo {
     /** Number of custom domain that the account is entitled to but has not yet reserved */
     privateDomain?: number;
     /**
-     * Number of private addresses that the account is entitled to but has not yet reserved
+     * Number of enhanced addresses that the account is entitled to but has not yet reserved
      * @example 100
      */
     privateAddressCredits?: number;
@@ -480,6 +480,8 @@ export interface CurrentUserInfo {
     company?: string;
     /** Company address associated with account */
     address?: string;
+    /** Entitlement flag indicating whether the account has access to the Firehose Web Socket API */
+    firehose?: number;
 }
 
 /** Describes current user stats */
@@ -495,13 +497,13 @@ export interface CurrentUserStats {
      */
     starredMessages?: number;
     /**
-     * Total messages on all private addresses and custom domains
+     * Total messages on all enhanced addresses and custom domains
      * @min 0
      * @example 100
      */
     storedMessages?: number;
     /**
-     * Sum size of all messages on private addresses and custom domains
+     * Sum size of all messages on enhanced addresses and custom domains
      * @min 0
      * @example 1024
      */
@@ -626,7 +628,7 @@ export class HttpClient<SecurityDataType = unknown> {
     private format?: ResponseType;
 
     constructor({ securityWorker, secure, format, ...axiosConfig }: ApiConfig<SecurityDataType> = {}) {
-        this.instance = axios.create({ ...axiosConfig, baseURL: axiosConfig.baseURL || "" });
+        this.instance = axios.create({ ...axiosConfig, baseURL: axiosConfig.baseURL || "https://mailsac.com/api" });
         this.secure = secure;
         this.format = format;
         this.securityWorker = securityWorker;
@@ -714,7 +716,8 @@ export class HttpClient<SecurityDataType = unknown> {
 
 /**
  * @title mailsac API Specification
- * @version 1.0.1
+ * @version 1.0.4
+ * @baseUrl https://mailsac.com/api
  *
  * ## About the API
  *
@@ -730,7 +733,7 @@ export class HttpClient<SecurityDataType = unknown> {
  *
  * **Base API Endpoint**:
  *
- * * `[https://mailsac.com/api/](https://mailsac.com/api/)`
+ * * `https://mailsac.com/api/`
  * * _All API documentation is relative to this endpoint._
  *
  * **OpenAPI Spec**:
@@ -756,11 +759,11 @@ export class HttpClient<SecurityDataType = unknown> {
 export class Mailsac<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
     addresses = {
         /**
-         * @description Get an array of private inbox address objects for the account. These addresses must be setup ("reserved") using `POST /api/addresses/:email`, or [on the Add Email Address page](https://mailsac.com/private-address).
+         * @description Get an array of enhanced private inbox address objects for the account. These addresses must be setup ("reserved") using `POST /api/addresses/:email`, or [on the Add Email Address page](https://mailsac.com/private-address).
          *
          * @tags Addresses
          * @name ListAddresses
-         * @summary List all private email addresses
+         * @summary List all enhanced email addresses
          * @request GET:/addresses
          * @secure
          */
@@ -831,11 +834,11 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
             }),
 
         /**
-         * @description Removes this private address from ownership by the account. Any email received to the address's inbox will be public in the future, unless the address was under a custom domain which is set private.
+         * @description Removes this enhanced private address from ownership by the account. Any email received to the address's inbox will be public in the future, unless the address was under a custom domain which is set private.
          *
          * @tags Addresses
          * @name DeleteAddress
-         * @summary Release a private email address
+         * @summary Release an enhanced email address
          * @request DELETE:/addresses/{email}
          * @secure
          */
@@ -872,11 +875,11 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
             }),
 
         /**
-         * @description Reserves multiple private addresses. The max addresses per request is 100.
+         * @description Reserves multiple enhanced private addresses. The max addresses per request is 100. It is not necessary to create enhanced addresses before receiving email. Enhanced addresses are only necessary to forward messages to another email address, Slack, web sockets, webhooks, or fetch messages over POP3.
          *
          * @tags Addresses
          * @name CreateAddresses
-         * @summary Reserve multiple private addresses
+         * @summary Reserve multiple enhanced addresses
          * @request POST:/private-addresses-bulk
          * @secure
          */
@@ -1598,7 +1601,7 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
             }),
 
         /**
-         * @description Search for attachments that were received during the requested time period. Limited to non-private inboxes. Responds with 'Failed to fetch' in swagger editor. Works in curl with generated example.
+         * @description Search for attachments that were received during the requested time period. Limited to public inboxes and messages not starred by a user. Responds with 'Failed to fetch' in swagger editor. Works in curl with generated example.
          *
          * @tags Attachments
          * @name ListPublicAttachments
@@ -1862,7 +1865,7 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
                 /** Mailsac-Key in the `?key=` querystring */
                 key?: string;
                 /**
-                 * Private addresses or domains which are enabled for web socket messages
+                 * Enhanced addresses or domains which are enabled for web socket messages
                  * @example "anything_123@mailsac.com,mail.mydomain.com"
                  */
                 addresses?: string;
@@ -1878,7 +1881,7 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
     };
     webhooks = {
         /**
-         * @description *Note: this does not work in Swagger UI.* Webhook Forwarding is one of several options available for forwarding private addresses and custom domains (via catch-all addresses enabled under a custom domain). Forwarding to a Webhook can be configured by selecting Manage Email Addresses from the Dashboard. Select the Settings button next to the email address to manage, then input the URL under Forward To Custom Webhook and select Save Settings. Troubleshoot webhooks using your account *Audit Logs*.
+         * @description *Note: this does not work in Swagger UI.* Webhook Forwarding is one of several options available for enhanced addresses and custom domains (via catch-all addresses enabled under a custom domain). Forwarding to a Webhook can be configured by selecting Manage Email Addresses from the Dashboard. Select the Settings button next to the email address to manage, then input the URL under Forward To Custom Webhook and select Save Settings. Troubleshoot webhooks using your account *Audit Logs*.
          *
          * @tags Webhooks
          * @name DoNotUseWebhookDocsOnly

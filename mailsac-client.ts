@@ -180,8 +180,11 @@ export interface EmailMessageWebSocketFrame {
 
 export type EmailMessageWebhook = EmailMessageBodyProps & EmailMessage;
 
-/** email Message List */
+/** List of full email message objects */
 export type EmailMessageList = EmailMessage[];
+
+/** List of condensed email message objects */
+export type EmailMessageListShort = EmailMessageShort[];
 
 export interface EmailMessageShort {
     inbox?: any;
@@ -716,7 +719,7 @@ export class HttpClient<SecurityDataType = unknown> {
 
 /**
  * @title mailsac API Specification
- * @version 1.0.4
+ * @version 1.0.5
  * @baseUrl https://mailsac.com/api
  *
  * ## About the API
@@ -991,7 +994,7 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
             },
             params: RequestParams = {},
         ) =>
-            this.request<EmailMessageShort, ErrorResponseBody>({
+            this.request<EmailMessageList, ErrorResponseBody>({
                 path: `/addresses/${email}/messages`,
                 method: "GET",
                 query: query,
@@ -1381,7 +1384,7 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
         ) =>
             this.request<
                 {
-                    messages?: EmailMessageShort[];
+                    messages?: EmailMessageListShort[];
                     unread?: number;
                     limit?: number;
                     skip?: number;
@@ -1418,7 +1421,7 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
         ) =>
             this.request<
                 {
-                    messages?: EmailMessageShort[];
+                    messages?: EmailMessageListShort[];
                 },
                 ErrorResponseBody
             >({
@@ -1449,7 +1452,7 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
             this.request<
                 {
                     query?: string;
-                    messages?: EmailMessageShort[];
+                    messages?: EmailMessageListShort[];
                 },
                 ErrorResponseBody
             >({
@@ -1480,7 +1483,7 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
             },
             params: RequestParams = {},
         ) =>
-            this.request<EmailMessageShort, ErrorResponseBody>({
+            this.request<EmailMessageListShort, ErrorResponseBody>({
                 path: `/domains/${domain}/messages`,
                 method: "GET",
                 query: query,

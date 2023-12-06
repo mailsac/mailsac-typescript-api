@@ -109,7 +109,7 @@ class HttpClient {
 exports.HttpClient = HttpClient;
 /**
  * @title mailsac API Specification
- * @version 1.0.4
+ * @version 1.0.5
  * @baseUrl https://mailsac.com/api
  *
  * ## About the API

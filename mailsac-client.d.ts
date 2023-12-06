@@ -157,8 +157,10 @@ export interface EmailMessageWebSocketFrame {
     email?: EmailMessageBodyProps & EmailMessage;
 }
 export type EmailMessageWebhook = EmailMessageBodyProps & EmailMessage;
-/** email Message List */
+/** List of full email message objects */
 export type EmailMessageList = EmailMessage[];
+/** List of condensed email message objects */
+export type EmailMessageListShort = EmailMessageShort[];
 export interface EmailMessageShort {
     inbox?: any;
     to?: any;
@@ -565,7 +567,7 @@ export declare class HttpClient<SecurityDataType = unknown> {
 }
 /**
  * @title mailsac API Specification
- * @version 1.0.4
+ * @version 1.0.5
  * @baseUrl https://mailsac.com/api
  *
  * ## About the API
@@ -738,7 +740,7 @@ export declare class Mailsac<SecurityDataType extends unknown> extends HttpClien
             until?: Date;
             /** Limit results to this many */
             limit?: Limit;
-        }, params?: RequestParams) => Promise<AxiosResponse<EmailMessageShort, any>>;
+        }, params?: RequestParams) => Promise<AxiosResponse<EmailMessageList, any>>;
         /**
          * @description This deletes all messages for a specific email address. The address must be an owned address or an address in a owned domain. Starred messages will not be deleted. Use `DELETE /addresses/{email}/messages/{messageId}` to remove starred messages or unstar the messages before calling this route.
          *
@@ -944,7 +946,7 @@ export declare class Mailsac<SecurityDataType extends unknown> extends HttpClien
             /** How many items to skip (like paging) */
             skip?: Skip;
         }, params?: RequestParams) => Promise<AxiosResponse<{
-            messages?: EmailMessageShort[];
+            messages?: EmailMessageListShort[];
             unread?: number;
             limit?: number;
             skip?: number;
@@ -966,7 +968,7 @@ export declare class Mailsac<SecurityDataType extends unknown> extends HttpClien
             /** Messages must include this text in TO envelope or the `message.inbox` is equal to this value */
             andTo?: string;
         }, params?: RequestParams) => Promise<AxiosResponse<{
-            messages?: EmailMessageShort[];
+            messages?: EmailMessageListShort[];
         }, any>>;
         /**
          * @description Search all account messages within the the `to` and `from` `.address` fields, and the `subject` line. This differs from `/api/inbox-filter` by using logical OR, rather than AND in `/api/inbox-filter`. A maximum of 100 results will ever be returned. Refine the query or reduce the number of messages in the account to find specific items.
@@ -982,7 +984,7 @@ export declare class Mailsac<SecurityDataType extends unknown> extends HttpClien
             query?: string;
         }, params?: RequestParams) => Promise<AxiosResponse<{
             query?: string;
-            messages?: EmailMessageShort[];
+            messages?: EmailMessageListShort[];
         }, any>>;
         /**
          * @description Get a list of messages across any inboxes of a domain. Messages are always **sorted in decending order by when they were received**, with the newest message always in the first position of the array. The email message objects are abbreviated to provide basic meta data. To get more information about a specific message, use `GET /api/addresses/{email}/messages/{messageId}`. The domain must be owned by the account making the request, and have DNS validated. Paginate with `until?=<Date>` and `limit=<uint>`.
@@ -998,7 +1000,7 @@ export declare class Mailsac<SecurityDataType extends unknown> extends HttpClien
             until?: Date;
             /** Limit results to this many */
             limit?: Limit;
-        }, params?: RequestParams) => Promise<AxiosResponse<EmailMessageShort, any>>;
+        }, params?: RequestParams) => Promise<AxiosResponse<EmailMessageListShort, any>>;
         /**
          * @description Delete all messages for a specifc domain. Starred messages will be deleted. The domain must be owned domain.
          *

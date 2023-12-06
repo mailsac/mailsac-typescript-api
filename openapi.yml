@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  version: 1.0.4
+  version: 1.0.5
   title: mailsac API Specification
   x-logo:
     url: "/img/mailsac-logo-v2.png"
@@ -505,7 +505,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/EmailMessageShort'
+                $ref: '#/components/schemas/EmailMessageList'
         '401':
           $ref: '#/components/responses/UnauthorizedError'
         '403':
@@ -1008,7 +1008,7 @@ paths:
                   messages:
                     type: array
                     items:
-                      $ref: '#/components/schemas/EmailMessageShort'
+                      $ref: '#/components/schemas/EmailMessageListShort'
                   unread:
                     type: integer
                   limit:
@@ -1065,7 +1065,7 @@ paths:
                   messages:
                     type: array
                     items:
-                      $ref: '#/components/schemas/EmailMessageShort'
+                      $ref: '#/components/schemas/EmailMessageListShort'
         '401':
           $ref: '#/components/responses/UnauthorizedError'
   '/inbox-search':
@@ -1104,7 +1104,7 @@ paths:
                   messages:
                     type: array
                     items:
-                      $ref: '#/components/schemas/EmailMessageShort'
+                      $ref: '#/components/schemas/EmailMessageListShort'
         '401':
           $ref: '#/components/responses/UnauthorizedError'
   '/domains':
@@ -1159,7 +1159,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/EmailMessageShort'
+                $ref: '#/components/schemas/EmailMessageListShort'
         '401':
           $ref: '#/components/responses/UnauthorizedError'
         '403':
@@ -2077,9 +2077,14 @@ components:
         - $ref: '#/components/schemas/EmailMessage'
     EmailMessageList:
       type: array
-      description: 'email Message List'
+      description: 'List of full email message objects'
       items:
         $ref: '#/components/schemas/EmailMessage'
+    EmailMessageListShort:
+      type: array
+      description: 'List of condensed email message objects'
+      items:
+          $ref: '#/components/schemas/EmailMessageShort'
     EmailMessageShort:
       type: object
       properties:

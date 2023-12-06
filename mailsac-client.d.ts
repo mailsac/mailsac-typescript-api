@@ -738,7 +738,7 @@ export declare class Mailsac<SecurityDataType extends unknown> extends HttpClien
             until?: Date;
             /** Limit results to this many */
             limit?: Limit;
-        }, params?: RequestParams) => Promise<AxiosResponse<EmailMessageShort, any>>;
+        }, params?: RequestParams) => Promise<AxiosResponse<EmailMessageShort[], any>>;
         /**
          * @description This deletes all messages for a specific email address. The address must be an owned address or an address in a owned domain. Starred messages will not be deleted. Use `DELETE /addresses/{email}/messages/{messageId}` to remove starred messages or unstar the messages before calling this route.
          *
@@ -998,7 +998,7 @@ export declare class Mailsac<SecurityDataType extends unknown> extends HttpClien
             until?: Date;
             /** Limit results to this many */
             limit?: Limit;
-        }, params?: RequestParams) => Promise<AxiosResponse<EmailMessageShort, any>>;
+        }, params?: RequestParams) => Promise<AxiosResponse<EmailMessageShort[], any>>;
         /**
          * @description Delete all messages for a specifc domain. Starred messages will be deleted. The domain must be owned domain.
          *

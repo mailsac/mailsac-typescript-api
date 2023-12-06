@@ -991,7 +991,7 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
             },
             params: RequestParams = {},
         ) =>
-            this.request<EmailMessageShort, ErrorResponseBody>({
+            this.request<EmailMessageShort[], ErrorResponseBody>({
                 path: `/addresses/${email}/messages`,
                 method: "GET",
                 query: query,
@@ -1480,7 +1480,7 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
             },
             params: RequestParams = {},
         ) =>
-            this.request<EmailMessageShort, ErrorResponseBody>({
+            this.request<EmailMessageShort[], ErrorResponseBody>({
                 path: `/domains/${domain}/messages`,
                 method: "GET",
                 query: query,

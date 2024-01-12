@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  version: 1.0.5
+  version: 1.0.6
   title: mailsac API Specification
   x-logo:
     url: "/img/mailsac-logo-v2.png"
@@ -1206,6 +1206,12 @@ paths:
         - Account
       summary: 'Get account stats'
       description: 'Get summary information about email addresses, domains, and usage.'
+      parameters:
+        - name: overrideAccountId
+          in: query
+          required: false
+          schema:
+            type: string
       security:
         - APIKeyQueryParam: []
         - APIKeyHeader: []
@@ -2473,7 +2479,7 @@ components:
           type: array
           description: 'The most recent email addresses viewed by this account in the UI'
           items:
-            $ref: '#/components/schemas/EmailStringList'
+            $ref: '#/components/schemas/EmailString'
         labels:
           description: 'Inbox labels created by the account'
           type: array
@@ -2488,6 +2494,61 @@ components:
         firehose:
           type: integer
           description: 'Entitlement flag indicating whether the account has access to the Firehose Web Socket API'
+        allowPublicDomains:
+          type: integer
+          description: 'Entitlement flag indicating whether the account has access to Public Domains'
+          enum:
+            - 0
+            - 1
+        viewAnalytics:
+          type: integer
+          description: 'Flag indicating whether account is allowed to view analytics'
+          enum:
+            - 0
+            - 1
+        apiAccess:
+          type: integer
+          description: 'Flag indicating whether account has access to API'
+          enum:
+            - 0
+            - 1
+        wsDomain:
+          type: integer
+          enum:
+            - 0
+            - 1
+        manyKeys:
+          type: integer
+          enum:
+            - 0
+            - 1
+        internalUnlimited:
+          type: integer
+          enum:
+            - 0
+            - 1
+        totalSent:
+          type: integer
+        lastLogin:
+          $ref: '#/components/schemas/Date'
+        allowMultipleUsers:
+          type: integer
+          enum:
+            - 0
+            - 1
+        userLimit:
+          type: integer
+          description: 'Number of users '
+        disableSpam:
+          type: boolean
+        stripeId:
+          type: string
+        moAPIDisabled:
+          type: integer
+        moAPILimitWarningEmail:
+          type: integer
+        apiKeyName:
+          type: string
     CurrentUserStats:
       description: 'Describes current user stats'
       type: object
@@ -2523,6 +2584,12 @@ components:
           minimum: 0
           example: 100
           description: 'Count of all outgoing messages ever sent'
+        lastMonthOps:
+          type: integer
+          description: 'Count of paid ops performed in the previous month'
+        defaultDomain:
+          type: string
+          description: 'Domain set to default'
     AttachmentMeta:
       description: 'Describes metadata for attachment'
       type: object

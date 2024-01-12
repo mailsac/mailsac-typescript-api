@@ -1,7 +1,7 @@
 # `new Mailsac({ headers: { "Mailsac-Key": 'REPLACE_APIKEY_HERE' } })`
 
 ## account
-### `account.accountStats(params = {})`
+### `account.accountStats(query, params = {})`
 ### `account.user(params = {})`
 
 ## addresses

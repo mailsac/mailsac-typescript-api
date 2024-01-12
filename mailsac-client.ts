@@ -476,7 +476,7 @@ export interface CurrentUserInfo {
     /** When present, indicates a disabled account */
     disabled?: string;
     /** The most recent email addresses viewed by this account in the UI */
-    recents?: EmailStringList[];
+    recents?: EmailString[];
     /** Inbox labels created by the account */
     labels?: string[];
     /** Company name associated with account */
@@ -485,6 +485,26 @@ export interface CurrentUserInfo {
     address?: string;
     /** Entitlement flag indicating whether the account has access to the Firehose Web Socket API */
     firehose?: number;
+    /** Entitlement flag indicating whether the account has access to Public Domains */
+    allowPublicDomains?: 0 | 1;
+    /** Flag indicating whether account is allowed to view analytics */
+    viewAnalytics?: 0 | 1;
+    /** Flag indicating whether account has access to API */
+    apiAccess?: 0 | 1;
+    wsDomain?: 0 | 1;
+    manyKeys?: 0 | 1;
+    internalUnlimited?: 0 | 1;
+    totalSent?: number;
+    /** Date in ISO 8601 */
+    lastLogin?: Date;
+    allowMultipleUsers?: 0 | 1;
+    /** Number of users  */
+    userLimit?: number;
+    disableSpam?: boolean;
+    stripeId?: string;
+    moAPIDisabled?: number;
+    moAPILimitWarningEmail?: number;
+    apiKeyName?: string;
 }
 
 /** Describes current user stats */
@@ -517,6 +537,10 @@ export interface CurrentUserStats {
      * @example 100
      */
     totalSent?: number;
+    /** Count of paid ops performed in the previous month */
+    lastMonthOps?: number;
+    /** Domain set to default */
+    defaultDomain?: string;
 }
 
 /** Describes metadata for attachment */
@@ -719,7 +743,7 @@ export class HttpClient<SecurityDataType = unknown> {
 
 /**
  * @title mailsac API Specification
- * @version 1.0.5
+ * @version 1.0.6
  * @baseUrl https://mailsac.com/api
  *
  * ## About the API
@@ -1555,10 +1579,16 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
          * @request GET:/me/stats
          * @secure
          */
-        accountStats: (params: RequestParams = {}) =>
+        accountStats: (
+            query?: {
+                overrideAccountId?: string;
+            },
+            params: RequestParams = {},
+        ) =>
             this.request<CurrentUserStats, ErrorResponseBody>({
                 path: `/me/stats`,
                 method: "GET",
+                query: query,
                 secure: true,
                 ...params,
             }),

@@ -109,7 +109,7 @@ class HttpClient {
 exports.HttpClient = HttpClient;
 /**
  * @title mailsac API Specification
- * @version 1.0.5
+ * @version 1.0.6
  * @baseUrl https://mailsac.com/api
  *
  * ## About the API
@@ -490,7 +490,7 @@ class Mailsac extends HttpClient {
              * @request GET:/me/stats
              * @secure
              */
-            accountStats: (params = {}) => this.request(Object.assign({ path: `/me/stats`, method: "GET", secure: true }, params)),
+            accountStats: (query, params = {}) => this.request(Object.assign({ path: `/me/stats`, method: "GET", query: query, secure: true }, params)),
         };
         this.attachments = {
             /**

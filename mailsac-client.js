@@ -36,16 +36,14 @@ var MessageFolder;
 (function (MessageFolder) {
     MessageFolder["Inbox"] = "inbox";
     MessageFolder["All"] = "all";
-    MessageFolder["Sent"] = "sent";
     MessageFolder["Spam"] = "spam";
     MessageFolder["Trash"] = "trash";
-    MessageFolder["Drafts"] = "drafts";
-})(MessageFolder = exports.MessageFolder || (exports.MessageFolder = {}));
+})(MessageFolder || (exports.MessageFolder = MessageFolder = {}));
 var ByteEncoding;
 (function (ByteEncoding) {
     ByteEncoding["Byte"] = "byte";
     ByteEncoding["Base64"] = "base64";
-})(ByteEncoding = exports.ByteEncoding || (exports.ByteEncoding = {}));
+})(ByteEncoding || (exports.ByteEncoding = ByteEncoding = {}));
 const axios_1 = require("axios");
 var ContentType;
 (function (ContentType) {
@@ -53,7 +51,7 @@ var ContentType;
     ContentType["FormData"] = "multipart/form-data";
     ContentType["UrlEncoded"] = "application/x-www-form-urlencoded";
     ContentType["Text"] = "text/plain";
-})(ContentType = exports.ContentType || (exports.ContentType = {}));
+})(ContentType || (exports.ContentType = ContentType = {}));
 class HttpClient {
     constructor(_a = {}) {
         var { securityWorker, secure, format } = _a, axiosConfig = __rest(_a, ["securityWorker", "secure", "format"]);
@@ -61,8 +59,8 @@ class HttpClient {
         this.setSecurityData = (data) => {
             this.securityData = data;
         };
-        this.request = (_b) => __awaiter(this, void 0, void 0, function* () {
-            var { secure, path, type, query, format, body } = _b, params = __rest(_b, ["secure", "path", "type", "query", "format", "body"]);
+        this.request = (_a) => __awaiter(this, void 0, void 0, function* () {
+            var { secure, path, type, query, format, body } = _a, params = __rest(_a, ["secure", "path", "type", "query", "format", "body"]);
             const secureParams = ((typeof secure === "boolean" ? secure : this.secure) &&
                 this.securityWorker &&
                 (yield this.securityWorker(this.securityData))) ||

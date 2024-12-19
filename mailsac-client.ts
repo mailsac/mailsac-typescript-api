@@ -144,7 +144,7 @@ export interface EmailMessage {
      * Inbox folder that this message has been put into
      * @default "inbox"
      */
-    folder?: "inbox" | "all" | "sent" | "spam" | "trash";
+    folder?: "inbox" | "all" | "spam" | "trash";
     /** Custom inbox labels created by the end user */
     labels?: string[];
     /** Read/uread status. true=read, false=unread. Only set from the Inbox UI app. */
@@ -367,10 +367,8 @@ export type MessageLabels = MessageLabel[];
 export enum MessageFolder {
     Inbox = "inbox",
     All = "all",
-    Sent = "sent",
     Spam = "spam",
     Trash = "trash",
-    Drafts = "drafts",
 }
 
 /** True to mark message as read, False to mark message unread. Default False */
@@ -453,11 +451,6 @@ export interface CurrentUserInfo {
      * @example 1000
      */
     messageLimit?: number;
-    /**
-     * Number of outbound recipients left to be able to send a message to
-     * @example 8181
-     */
-    sendsRemaining?: number;
     /** Number of custom domain that the account is entitled to but has not yet reserved */
     privateDomain?: number;
     /**
@@ -494,7 +487,6 @@ export interface CurrentUserInfo {
     wsDomain?: 0 | 1;
     manyKeys?: 0 | 1;
     internalUnlimited?: 0 | 1;
-    totalSent?: number;
     /** Date in ISO 8601 */
     lastLogin?: Date;
     allowMultipleUsers?: 0 | 1;
@@ -531,12 +523,6 @@ export interface CurrentUserStats {
      * @example 1024
      */
     inboxBytes?: number;
-    /**
-     * Count of all outgoing messages ever sent
-     * @min 0
-     * @example 100
-     */
-    totalSent?: number;
     /** Count of paid ops performed in the previous month */
     lastMonthOps?: number;
     /** Domain set to default */

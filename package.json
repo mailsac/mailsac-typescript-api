@@ -1,6 +1,6 @@
 {
   "name": "@mailsac/api",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Official Mailsac API client library",
   "main": "mailsac-client.js",
   "private": false,

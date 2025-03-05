@@ -107,7 +107,7 @@ class HttpClient {
 exports.HttpClient = HttpClient;
 /**
  * @title mailsac API Specification
- * @version 1.0.6
+ * @version 1.0.8
  * @baseUrl https://mailsac.com/api
  *
  * ## About the API
@@ -467,6 +467,16 @@ class Mailsac extends HttpClient {
              * @secure
              */
             listDomains: (params = {}) => this.request(Object.assign({ path: `/domains`, method: "GET", secure: true, format: "json" }, params)),
+            /**
+             * @description Get information about a configured domain, including the number of messages.
+             *
+             * @tags Domains
+             * @name GetDomain
+             * @summary Get domain information
+             * @request GET:/domains/{domain}
+             * @secure
+             */
+            getDomain: (domain, params = {}) => this.request(Object.assign({ path: `/domains/${domain}`, method: "GET", secure: true, format: "json" }, params)),
         };
         this.account = {
             /**

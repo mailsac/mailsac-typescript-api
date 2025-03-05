@@ -577,7 +577,7 @@ export declare class HttpClient<SecurityDataType = unknown> {
 }
 /**
  * @title mailsac API Specification
- * @version 1.0.6
+ * @version 1.0.8
  * @baseUrl https://mailsac.com/api
  *
  * ## About the API
@@ -977,6 +977,8 @@ export declare class Mailsac<SecurityDataType extends unknown> extends HttpClien
             andFrom?: string;
             /** Messages must include this text in TO envelope or the `message.inbox` is equal to this value */
             andTo?: string;
+            /** Messages must be read or unread */
+            andRead?: boolean;
         }, params?: RequestParams) => Promise<AxiosResponse<{
             messages?: EmailMessageListShort[];
         }, any>>;
@@ -1033,6 +1035,21 @@ export declare class Mailsac<SecurityDataType extends unknown> extends HttpClien
          * @secure
          */
         listDomains: (params?: RequestParams) => Promise<AxiosResponse<DomainsList, any>>;
+        /**
+         * @description Get information about a configured domain, including the number of messages.
+         *
+         * @tags Domains
+         * @name GetDomain
+         * @summary Get domain information
+         * @request GET:/domains/{domain}
+         * @secure
+         */
+        getDomain: (domain: string, params?: RequestParams) => Promise<AxiosResponse<{
+            /** Custom domain */
+            domain?: Domain;
+            totalMessages?: number;
+            catchAllAddress?: EmailAddress;
+        }, any>>;
     };
     account: {
         /**

@@ -729,7 +729,7 @@ export class HttpClient<SecurityDataType = unknown> {
 
 /**
  * @title mailsac API Specification
- * @version 1.0.6
+ * @version 1.0.8
  * @baseUrl https://mailsac.com/api
  *
  * ## About the API
@@ -1426,6 +1426,8 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
                 andFrom?: string;
                 /** Messages must include this text in TO envelope or the `message.inbox` is equal to this value */
                 andTo?: string;
+                /** Messages must be read or unread */
+                andRead?: boolean;
             },
             params: RequestParams = {},
         ) =>
@@ -1532,6 +1534,32 @@ export class Mailsac<SecurityDataType extends unknown> extends HttpClient<Securi
         listDomains: (params: RequestParams = {}) =>
             this.request<DomainsList, ErrorResponseBody>({
                 path: `/domains`,
+                method: "GET",
+                secure: true,
+                format: "json",
+                ...params,
+            }),
+
+        /**
+         * @description Get information about a configured domain, including the number of messages.
+         *
+         * @tags Domains
+         * @name GetDomain
+         * @summary Get domain information
+         * @request GET:/domains/{domain}
+         * @secure
+         */
+        getDomain: (domain: string, params: RequestParams = {}) =>
+            this.request<
+                {
+                    /** Custom domain */
+                    domain?: Domain;
+                    totalMessages?: number;
+                    catchAllAddress?: EmailAddress;
+                },
+                ErrorResponseBody
+            >({
+                path: `/domains/${domain}`,
                 method: "GET",
                 secure: true,
                 format: "json",

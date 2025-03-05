@@ -22,6 +22,7 @@
 ### `attachments.listPublicAttachments(query, params = {})`
 
 ## domains
+### `domains.getDomain(domain, params = {})`
 ### `domains.listDomains(params = {})`
 
 ## emailValidation

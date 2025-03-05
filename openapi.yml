@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  version: 1.0.6
+  version: 1.0.8
   title: mailsac API Specification
   x-logo:
     url: "/img/mailsac-logo-v2.png"
@@ -1037,6 +1037,12 @@ paths:
         required: false
         schema:
           type: string
+      - name: andRead
+        in: query
+        description: 'Messages must be read or unread'
+        required: false
+        schema:
+          type: boolean
     get:
       operationId: FilterInboxMessages
       tags:
@@ -1127,6 +1133,32 @@ paths:
                 $ref: '#/components/schemas/DomainsList'
         '401':
           $ref: '#/components/responses/UnauthorizedError'
+  '/domains/{domain}':
+    get:
+        operationId: GetDomain
+        tags:
+            - Domains
+        security:
+            - APIKeyQueryParam: [ ]
+            - APIKeyHeader: [ ]
+        summary: Get domain information
+        description: >-
+            Get information about a configured domain, including the number of messages.
+        responses:
+          '200':
+            description: 'Domain information'
+            content:
+                application/json:
+                  schema:
+                    properties:
+                      domain:
+                        $ref: '#/components/schemas/Domain'
+                      totalMessages:
+                        type: integer
+                      catchAllAddress:
+                        $ref: '#/components/schemas/EmailAddress'
+          '401':
+            $ref: '#/components/responses/UnauthorizedError'
   '/domains/{domain}/messages':
     parameters:
       - $ref: '#/components/parameters/DomainString'
@@ -1164,6 +1196,15 @@ paths:
           $ref: '#/components/responses/UnauthorizedError'
         '403':
           $ref: '#/components/responses/OwnedByAnotherUser'
+  '/domains/:domain/privacy/:isPrivateBoolean':
+    parameters:
+      - $ref: '#/components/parameters/DomainString'
+      - in: path
+        name: isPrivateBoolean
+        description: 'boolean indicating private or public messages'
+        required: true
+        schema:
+          type: boolean
   '/domains/{domain}/delete-all-domain-mail':
     parameters:
       - $ref: '#/components/parameters/DomainString'
